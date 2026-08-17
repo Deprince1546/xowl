@@ -180,7 +180,7 @@ export async function fetchOnchain(address: string): Promise<OnchainSnapshot> {
 
   let holders: number | null = null;
   let transferCount: number | null = null;
-  const apiKey = process.env["OKLINK_API_KEY"];
+  const apiKey = process.env["OKLINK_API_KEY"]?.replace(/[^\x21-\x7e]/g, "");
   if (apiKey) {
     try {
       const response = await fetch(
@@ -271,7 +271,7 @@ export function scoreToken(market: MarketToken, onchain: OnchainSnapshot): Score
 }
 
 export async function askCoasty(prompt: string, system: string): Promise<string> {
-  const apiKey = process.env["COASTY_API_KEY"];
+  const apiKey = process.env["COASTY_API_KEY"]?.replace(/[^\x21-\x7e]/g, "");
   if (!apiKey) return "";
   try {
     const response = await fetch("https://api.coasty.ai/v1/chat/completions", {
