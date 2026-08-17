@@ -271,30 +271,52 @@ export function scoreToken(market: MarketToken, onchain: OnchainSnapshot): Score
 }
 
 export async function askCoasty(prompt: string, system: string): Promise<string> {
-  const apiKey = process.env["COASTY_API_KEY"]?.replace(/[^\x21-\x7e]/g, "");
-  if (!apiKey) return "";
-  try {
-    const response = await fetch("https://api.coasty.ai/v1/chat/completions", {
-      method: "POST",
-      headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model: "coasty-1",
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: prompt },
-        ],
-      }),
+  const clean = (value?: string) => value?.replace(/[^\x21-\x7e]/g, "");
+  const coastyKey = clean(process.env["COASTY_API_KEY"]);
+  const coastyUrl = clean(process.env["COASTY_BASE_URL"]);
+  const lovableKey = clean(process.env["LOVABLE_API_KEY"]);
+
+  const targets: { url: string; key: string; model: string }[] = [];
+  if (coastyKey && coastyUrl) {
+    targets.push({
+      url: `${coastyUrl.replace(/\/$/, "")}/chat/completions`,
+      key: coastyKey,
+      model: clean(process.env["COASTY_MODEL"]) ?? "coasty-1",
     });
-    if (!response.ok) {
-      console.error(`Coasty request failed [${response.status}]: ${await response.text()}`);
-      return "";
-    }
-    const json = (await response.json()) as { choices?: { message?: { content?: string } }[] };
-    return json.choices?.[0]?.message?.content ?? "";
-  } catch (error) {
-    console.error("Coasty request error", error);
-    return "";
   }
+  if (lovableKey) {
+    targets.push({
+      url: "https://ai.gateway.lovable.dev/v1/chat/completions",
+      key: lovableKey,
+      model: "google/gemini-3.5-flash",
+    });
+  }
+
+  for (const target of targets) {
+    try {
+      const response = await fetch(target.url, {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: `Bearer ${target.key}` },
+        body: JSON.stringify({
+          model: target.model,
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: prompt },
+          ],
+        }),
+      });
+      if (!response.ok) {
+        console.error(`AI request failed [${response.status}]: ${await response.text()}`);
+        continue;
+      }
+      const json = (await response.json()) as { choices?: { message?: { content?: string } }[] };
+      const content = json.choices?.[0]?.message?.content;
+      if (content) return content;
+    } catch (error) {
+      console.error("AI request error", error);
+    }
+  }
+  return "";
 }
 
 export function localReasoning(market: MarketToken, onchain: OnchainSnapshot, scores: Scores) {
