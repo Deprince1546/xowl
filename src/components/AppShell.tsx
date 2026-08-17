@@ -14,7 +14,6 @@ const NAV = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  const { user, signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
