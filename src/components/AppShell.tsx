@@ -3,8 +3,6 @@ import { useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
 
 import { WalletButton } from "@/components/WalletButton";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
 import logoAsset from "@/assets/xowl-logo.jpg.asset.json";
 
 const NAV = [
@@ -16,7 +14,6 @@ const NAV = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  const { user, signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -48,17 +45,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="hidden sm:block">
               <WalletButton />
             </div>
-            {user ? (
-              <Button variant="ghost" size="sm" className="data hidden text-xs uppercase md:inline-flex" onClick={() => void signOut()}>
-                Sign out
-              </Button>
-            ) : (
-              <Link to="/auth" className="hidden md:block">
-                <Button variant="outline" size="sm" className="data text-xs uppercase">
-                  Sign in
-                </Button>
-              </Link>
-            )}
             <button
               type="button"
               aria-label={open ? "Close menu" : "Open menu"}
@@ -83,23 +69,6 @@ export function AppShell({ children }: { children: ReactNode }) {
                   {item.label}
                 </Link>
               ))}
-              {user ? (
-                <button
-                  type="button"
-                  onClick={() => void signOut()}
-                  className="data rounded-md px-3 py-3 text-left text-xs uppercase tracking-[0.18em] text-muted-foreground"
-                >
-                  Sign out
-                </button>
-              ) : (
-                <Link
-                  to="/auth"
-                  onClick={() => setOpen(false)}
-                  className="data rounded-md px-3 py-3 text-xs uppercase tracking-[0.18em] text-muted-foreground"
-                >
-                  Sign in
-                </Link>
-              )}
             </div>
             <div className="mt-4 flex justify-start sm:hidden">
               <WalletButton />
