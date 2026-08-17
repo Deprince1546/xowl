@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CallsRouteImport } from './routes/calls'
+import { Route as EchoidRouteImport } from './routes/echoid'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as TokensAddressRouteImport } from './routes/tokens.$address'
 
@@ -36,6 +37,11 @@ const CallsRoute = CallsRouteImport.update({
   path: '/calls',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EchoidRoute = EchoidRouteImport.update({
+  id: '/echoid',
+  path: '/echoid',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortfolioRoute = PortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/ai': typeof AiRoute
   '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
+  '/echoid': typeof EchoidRoute
   '/portfolio': typeof PortfolioRoute
   '/tokens/$address': typeof TokensAddressRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/ai': typeof AiRoute
   '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
+  '/echoid': typeof EchoidRoute
   '/portfolio': typeof PortfolioRoute
   '/tokens/$address': typeof TokensAddressRoute
 }
@@ -69,21 +77,36 @@ export interface FileRoutesById {
   '/ai': typeof AiRoute
   '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
+  '/echoid': typeof EchoidRoute
   '/portfolio': typeof PortfolioRoute
   '/tokens/$address': typeof TokensAddressRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/ai' | '/auth' | '/calls' | '/portfolio' | '/tokens/$address'
+    | '/'
+    | '/ai'
+    | '/auth'
+    | '/calls'
+    | '/echoid'
+    | '/portfolio'
+    | '/tokens/$address'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ai' | '/auth' | '/calls' | '/portfolio' | '/tokens/$address'
+  to:
+    | '/'
+    | '/ai'
+    | '/auth'
+    | '/calls'
+    | '/echoid'
+    | '/portfolio'
+    | '/tokens/$address'
   id:
     | '__root__'
     | '/'
     | '/ai'
     | '/auth'
     | '/calls'
+    | '/echoid'
     | '/portfolio'
     | '/tokens/$address'
   fileRoutesById: FileRoutesById
@@ -93,6 +116,7 @@ export interface RootRouteChildren {
   AiRoute: typeof AiRoute
   AuthRoute: typeof AuthRoute
   CallsRoute: typeof CallsRoute
+  EchoidRoute: typeof EchoidRoute
   PortfolioRoute: typeof PortfolioRoute
   TokensAddressRoute: typeof TokensAddressRoute
 }
@@ -127,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CallsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/echoid': {
+      id: '/echoid'
+      path: '/echoid'
+      fullPath: '/echoid'
+      preLoaderRoute: typeof EchoidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/portfolio': {
       id: '/portfolio'
       path: '/portfolio'
@@ -149,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AiRoute: AiRoute,
   AuthRoute: AuthRoute,
   CallsRoute: CallsRoute,
+  EchoidRoute: EchoidRoute,
   PortfolioRoute: PortfolioRoute,
   TokensAddressRoute: TokensAddressRoute,
 }
