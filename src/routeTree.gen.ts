@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AiRouteImport } from './routes/ai'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CallsRouteImport } from './routes/calls'
 import { Route as TokensAddressRouteImport } from './routes/tokens.$address'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const AiRoute = AiRouteImport.update({
   id: '/ai',
   path: '/ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CallsRoute = CallsRouteImport.update({
@@ -38,12 +44,14 @@ const TokensAddressRoute = TokensAddressRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
+  '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
   '/tokens/$address': typeof TokensAddressRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
+  '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
   '/tokens/$address': typeof TokensAddressRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
+  '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
   '/tokens/$address': typeof TokensAddressRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ai' | '/calls' | '/tokens/$address'
+  fullPaths: '/' | '/ai' | '/auth' | '/calls' | '/tokens/$address'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ai' | '/calls' | '/tokens/$address'
-  id: '__root__' | '/' | '/ai' | '/calls' | '/tokens/$address'
+  to: '/' | '/ai' | '/auth' | '/calls' | '/tokens/$address'
+  id: '__root__' | '/' | '/ai' | '/auth' | '/calls' | '/tokens/$address'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiRoute: typeof AiRoute
+  AuthRoute: typeof AuthRoute
   CallsRoute: typeof CallsRoute
   TokensAddressRoute: typeof TokensAddressRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/ai'
       fullPath: '/ai'
       preLoaderRoute: typeof AiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/calls': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiRoute: AiRoute,
+  AuthRoute: AuthRoute,
   CallsRoute: CallsRoute,
   TokensAddressRoute: TokensAddressRoute,
 }
