@@ -270,18 +270,23 @@ export function scoreToken(market: MarketToken, onchain: OnchainSnapshot): Score
   };
 }
 
+// Coasty's public API (https://coasty.ai/v1) is a computer-use agent API — it exposes
+// /v1/predict, /v1/ground, /v1/machines etc., but no text chat endpoint. We probe its
+// OpenAI-compatible path directly with the key (no base URL / model config needed) and
+// fall back to Lovable AI for text reasoning when it 404s.
+const COASTY_BASE_URL = "https://coasty.ai/v1";
+
 export async function askCoasty(prompt: string, system: string): Promise<string> {
   const clean = (value?: string) => value?.replace(/[^\x21-\x7e]/g, "");
   const coastyKey = clean(process.env["COASTY_API_KEY"]);
-  const coastyUrl = clean(process.env["COASTY_BASE_URL"]);
   const lovableKey = clean(process.env["LOVABLE_API_KEY"]);
 
   const targets: { url: string; key: string; model: string }[] = [];
-  if (coastyKey && coastyUrl) {
+  if (coastyKey) {
     targets.push({
-      url: `${coastyUrl.replace(/\/$/, "")}/chat/completions`,
+      url: `${COASTY_BASE_URL}/chat/completions`,
       key: coastyKey,
-      model: clean(process.env["COASTY_MODEL"]) ?? "coasty-1",
+      model: "default",
     });
   }
   if (lovableKey) {
@@ -291,6 +296,7 @@ export async function askCoasty(prompt: string, system: string): Promise<string>
       model: "google/gemini-3.5-flash",
     });
   }
+
 
   for (const target of targets) {
     try {
