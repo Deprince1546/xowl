@@ -81,7 +81,12 @@ function mapPool(pool: GeckoPool, tokens: Map<string, GeckoToken>): MarketToken 
   };
 }
 
+const cache = new Map<string, { at: number; value: MarketToken[] }>();
+const TTL = 30_000;
+
 async function geckoFetch(path: string): Promise<MarketToken[]> {
+  const cached = cache.get(path);
+  if (cached && Date.now() - cached.at < TTL) return cached.value;
   const response = await fetch(`${GECKO}${path}`, { headers: { accept: "application/json" } });
   if (!response.ok) {
     throw new Error(`Market request failed [${response.status}]: ${await response.text()}`);
@@ -97,7 +102,9 @@ async function geckoFetch(path: string): Promise<MarketToken[]> {
     const existing = best.get(key);
     if (!existing || (token.liquidityUsd ?? 0) > (existing.liquidityUsd ?? 0)) best.set(key, token);
   }
-  return [...best.values()];
+  const value = [...best.values()];
+  cache.set(path, { at: Date.now(), value });
+  return value;
 }
 
 export async function discoverXLayerTokens(): Promise<MarketToken[]> {
