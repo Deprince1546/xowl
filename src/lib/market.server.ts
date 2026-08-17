@@ -128,9 +128,17 @@ export async function discoverXLayerTokens(): Promise<MarketToken[]> {
 }
 
 export async function fetchTokenMarket(address: string): Promise<MarketToken | null> {
-  const tokens = await geckoFetch(`/tokens/${address}/pools?include=base_token`).catch(() => []);
-  const match = tokens.find((token) => token.address.toLowerCase() === address.toLowerCase());
-  return match ?? tokens[0] ?? null;
+  const target = address.toLowerCase();
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const tokens = await geckoFetch(`/tokens/${address}/pools?include=base_token`).catch(() => null);
+    if (tokens && tokens.length > 0) {
+      return tokens.find((token) => token.address.toLowerCase() === target) ?? tokens[0]!;
+    }
+    if (tokens && tokens.length === 0) break;
+    await new Promise((resolve) => setTimeout(resolve, 800 * (attempt + 1)));
+  }
+  const discovered = await discoverXLayerTokens().catch(() => []);
+  return discovered.find((token) => token.address.toLowerCase() === target) ?? null;
 }
 
 type RpcResult = string | null;
