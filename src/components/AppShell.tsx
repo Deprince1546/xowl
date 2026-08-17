@@ -3,8 +3,6 @@ import { useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
 
 import { WalletButton } from "@/components/WalletButton";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
 import logoAsset from "@/assets/xowl-logo.jpg.asset.json";
 
 const NAV = [
