@@ -51,8 +51,29 @@ function Home() {
 
   return (
     <AppShell>
-      <section className="grid-noise border-b border-border">
+      <section className="relative isolate overflow-hidden border-b border-border">
+        <div className="absolute inset-0 -z-20 bg-black">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster={HERO_POSTER}
+            className="h-full w-full object-cover object-center"
+          >
+            <source src={HERO_VIDEO} type="video/mp4" />
+          </video>
+        </div>
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0.55) 100%), linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.85) 100%)",
+          }}
+        />
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:py-24">
+
           <div className="min-w-0">
             <span className="data inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-primary">
               <Radar className="h-3 w-3" /> X Layer · chain 196
