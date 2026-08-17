@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CallsRouteImport } from './routes/calls'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as TokensAddressRouteImport } from './routes/tokens.$address'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const CallsRoute = CallsRouteImport.update({
   path: '/calls',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TokensAddressRoute = TokensAddressRouteImport.update({
   id: '/tokens/$address',
   path: '/tokens/$address',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/ai': typeof AiRoute
   '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
+  '/portfolio': typeof PortfolioRoute
   '/tokens/$address': typeof TokensAddressRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/ai': typeof AiRoute
   '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
+  '/portfolio': typeof PortfolioRoute
   '/tokens/$address': typeof TokensAddressRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,23 @@ export interface FileRoutesById {
   '/ai': typeof AiRoute
   '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
+  '/portfolio': typeof PortfolioRoute
   '/tokens/$address': typeof TokensAddressRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ai' | '/auth' | '/calls' | '/tokens/$address'
+  fullPaths:
+    '/' | '/ai' | '/auth' | '/calls' | '/portfolio' | '/tokens/$address'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ai' | '/auth' | '/calls' | '/tokens/$address'
-  id: '__root__' | '/' | '/ai' | '/auth' | '/calls' | '/tokens/$address'
+  to: '/' | '/ai' | '/auth' | '/calls' | '/portfolio' | '/tokens/$address'
+  id:
+    | '__root__'
+    | '/'
+    | '/ai'
+    | '/auth'
+    | '/calls'
+    | '/portfolio'
+    | '/tokens/$address'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +93,7 @@ export interface RootRouteChildren {
   AiRoute: typeof AiRoute
   AuthRoute: typeof AuthRoute
   CallsRoute: typeof CallsRoute
+  PortfolioRoute: typeof PortfolioRoute
   TokensAddressRoute: typeof TokensAddressRoute
 }
 
@@ -109,6 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CallsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tokens/$address': {
       id: '/tokens/$address'
       path: '/tokens/$address'
@@ -124,6 +149,7 @@ const rootRouteChildren: RootRouteChildren = {
   AiRoute: AiRoute,
   AuthRoute: AuthRoute,
   CallsRoute: CallsRoute,
+  PortfolioRoute: PortfolioRoute,
   TokensAddressRoute: TokensAddressRoute,
 }
 export const routeTree = rootRouteImport
