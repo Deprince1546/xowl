@@ -1,188 +1,156 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import "../styles/hero.css";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { ArrowRight, Radar } from "lucide-react";
 
-const VIDEO_URL =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_133255_956f653f-5d80-4b06-abd5-0f46c98b60fa.mp4";
-const POSTER_URL =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_132328_5f9029c8-218f-4489-82b6-29ff2849920e.png";
-
-const LINKS = [
-  { label: "Story", href: "#story" },
-  { label: "Platforms", href: "#platforms" },
-  { label: "Identity", href: "#identity" },
-  { label: "Contact", href: "#contact" },
-];
+import { AppShell } from "@/components/AppShell";
+import { ChangePill, TokenCard } from "@/components/TokenCard";
+import { Button } from "@/components/ui/button";
+import { getDiscoveryFeed } from "@/lib/market.functions";
+import { formatUsd } from "@/lib/xlayer";
+import logoAsset from "@/assets/xowl-logo.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ECHOID — Your voice ID to the E network" },
+      { title: "XOwl — AI memecoin intelligence for X Layer" },
       {
         name: "description",
         content:
-          "ECHOID is your voice ID to the E network. Request voice entry and claim your identity.",
+          "XOwl scans X Layer (chain 196) memecoins in real time, scores them with onchain-weighted AI and surfaces high-conviction calls.",
       },
-      { property: "og:title", content: "ECHOID — Your voice ID to the E network" },
+      { property: "og:title", content: "XOwl — AI memecoin intelligence for X Layer" },
       {
         property: "og:description",
-        content:
-          "ECHOID is your voice ID to the E network. Request voice entry and claim your identity.",
+        content: "Live X Layer token radar, AI scoring, transparent call history and auto-trade controls.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:image", content: POSTER_URL },
-      { name: "twitter:image", content: POSTER_URL },
     ],
-    links: [{ rel: "preconnect", href: "https://d8j0ntlcm91z4.cloudfront.net" }],
   }),
-  component: Index,
+  component: Home,
 });
 
-function Index() {
-  const [open, setOpen] = useState(false);
-  const toggleRef = useRef<HTMLButtonElement>(null);
+function Home() {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["discovery"],
+    queryFn: () => getDiscoveryFeed(),
+    refetchInterval: 60_000,
+  });
+
+  const tokens = data?.tokens ?? [];
+  const [slide, setSlide] = useState(0);
 
   useEffect(() => {
-    document.body.classList.toggle("menu-open", open);
-    return () => document.body.classList.remove("menu-open");
-  }, [open]);
+    if (tokens.length < 2) return;
+    const id = setInterval(() => setSlide((s) => (s + 1) % Math.min(tokens.length, 10)), 5000);
+    return () => clearInterval(id);
+  }, [tokens.length]);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && open) {
-        setOpen(false);
-        toggleRef.current?.focus();
-      }
-    };
-    const mq = window.matchMedia("(min-width: 901px)");
-    const onChange = () => mq.matches && setOpen(false);
-    window.addEventListener("keydown", onKey);
-    mq.addEventListener("change", onChange);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      mq.removeEventListener("change", onChange);
-    };
-  }, [open]);
+  const featured = tokens[slide];
 
   return (
-    <section className="hero">
-      <div
-        className="hero__media"
-        style={{ ["--poster" as string]: `url(${POSTER_URL})` }}
-      >
-        <video autoPlay muted loop playsInline preload="auto" poster={POSTER_URL}>
-          <source src={VIDEO_URL} type="video/mp4" />
-        </video>
-      </div>
-      <div className="hero__scrim" />
-
-      <header className="nav">
-        <a className="nav__logo" href="#top">
-          ECHOID
-        </a>
-        <nav className="nav__right">
-          <div className="nav__links">
-            {LINKS.map((l) => (
-              <a key={l.href} className="nav__link" href={l.href}>
-                {l.label}
-              </a>
-            ))}
+    <AppShell>
+      <section className="grid-noise border-b border-border">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:py-24">
+          <div className="min-w-0">
+            <span className="data inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-primary">
+              <Radar className="h-3 w-3" /> X Layer · chain 196
+            </span>
+            <h1 className="mt-6 font-display text-4xl leading-tight font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+              The owl watches every X Layer memecoin.
+            </h1>
+            <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+              XOwl streams live pairs, weights onchain behaviour over hype at 60/40, filters rugs and publishes every
+              call with its full history — winners and losers alike.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to="/calls">
+                <Button className="data uppercase tracking-widest">
+                  View calls <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/ai">
+                <Button variant="outline" className="data uppercase tracking-widest">
+                  Open AI terminal
+                </Button>
+              </Link>
+            </div>
           </div>
-          <a className="nav__cta" href="#join">
-            Join up
-          </a>
-          <button
-            ref={toggleRef}
-            type="button"
-            className={`nav__toggle${open ? " is-active" : ""}`}
-            aria-expanded={open}
-            aria-controls="mobileMenu"
-            aria-label={open ? "Close menu" : "Open menu"}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
-        </nav>
-      </header>
 
-      <div
-        id="mobileMenu"
-        className={`mobile-menu${open ? " is-open" : ""}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Site menu"
-        aria-hidden={!open}
-        {...(!open ? { inert: "" as unknown as boolean } : {})}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) setOpen(false);
-        }}
-      >
-        {LINKS.map((l, i) => (
-          <a
-            key={l.href}
-            className="mobile-menu__link"
-            href={l.href}
-            style={{ ["--i" as string]: i }}
-            onClick={() => setOpen(false)}
-          >
-            {l.label}
-          </a>
-        ))}
-        <a
-          className="mobile-menu__cta"
-          href="#join"
-          style={{ ["--i" as string]: 4 }}
-          onClick={() => setOpen(false)}
-        >
-          Join up
-        </a>
-      </div>
+          <div className="min-w-0 rounded-xl border border-border bg-card p-5">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+              <p className="data truncate text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                Live radar slideshow
+              </p>
+              <img src={logoAsset.url} alt="" className="h-8 w-8 shrink-0 rounded-md object-cover opacity-80" />
+            </div>
 
-      <div className="hero__body">
-        <div className="panel">
-          <span className="panel__chip">[ Voice entry ]</span>
-          <h1 className="panel__title">ECHOID</h1>
-          <p className="panel__tagline">Your voice ID to the E network.</p>
+            {isLoading && <p className="data mt-8 text-xs text-muted-foreground">Scanning X Layer pairs…</p>}
+            {isError && <p className="data mt-8 text-xs text-destructive">Radar feed unavailable right now.</p>}
+            {!isLoading && !isError && !featured && (
+              <p className="data mt-8 text-xs text-muted-foreground">No live X Layer pairs matched the filter.</p>
+            )}
 
-          <form
-            className="panel__form"
-            action="#"
-            method="post"
-            noValidate
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <label className="vh" htmlFor="email">
-              Email
-            </label>
-            <input
-              id="email"
-              className="field"
-              type="email"
-              name="email"
-              placeholder="Email"
-            />
-            <button type="submit" className="btn btn--ghost">
-              Proceed using email
-            </button>
-            <button type="submit" className="btn btn--solid">
-              Access
-            </button>
-          </form>
-
-          <a className="panel__referral" href="#invite">
-            I&apos;ve got an invite key
-          </a>
+            {featured && (
+              <div className="mt-6">
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-display text-3xl font-semibold">{featured.symbol}</p>
+                    <p className="truncate text-xs text-muted-foreground">{featured.name}</p>
+                  </div>
+                  <ChangePill value={featured.change24h} />
+                </div>
+                <dl className="data mt-6 grid grid-cols-2 gap-3 text-xs">
+                  {[
+                    ["Price", formatUsd(featured.priceUsd)],
+                    ["Market cap", formatUsd(featured.marketCap ?? featured.fdv)],
+                    ["Liquidity", formatUsd(featured.liquidityUsd)],
+                    ["24h volume", formatUsd(featured.volume24h)],
+                  ].map(([label, value]) => (
+                    <div key={label} className="rounded-md border border-border p-3">
+                      <dt className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</dt>
+                      <dd className="mt-1 text-sm">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <Link
+                  to="/tokens/$address"
+                  params={{ address: featured.address }}
+                  className="data mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-widest text-primary hover:underline"
+                >
+                  Full intel <ArrowRight className="h-3 w-3" />
+                </Link>
+                <div className="mt-5 flex flex-wrap gap-1.5">
+                  {tokens.slice(0, 10).map((t, i) => (
+                    <button
+                      key={t.address}
+                      type="button"
+                      aria-label={`Show ${t.symbol}`}
+                      onClick={() => setSlide(i)}
+                      className={`h-1 w-6 rounded-full transition-colors ${i === slide ? "bg-primary" : "bg-border"}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </section>
 
-      <footer className="legal">
-        Opening an e.xyz account signals that you accept our{" "}
-        <a href="#privacy-notice">Privacy Notice</a> and{" "}
-        <a href="#service-contract">Service Contract</a>.
-      </footer>
-    </section>
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
+          <div className="min-w-0">
+            <h2 className="font-display text-2xl font-semibold">Live X Layer radar</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Ranked by 24h volume, refreshed every minute.</p>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {tokens.slice(0, 12).map((token) => (
+            <TokenCard key={token.address} token={token} />
+          ))}
+        </div>
+      </section>
+    </AppShell>
   );
 }
