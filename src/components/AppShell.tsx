@@ -45,17 +45,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="hidden sm:block">
               <WalletButton />
             </div>
-            {user ? (
-              <Button variant="ghost" size="sm" className="data hidden text-xs uppercase md:inline-flex" onClick={() => void signOut()}>
-                Sign out
-              </Button>
-            ) : (
-              <Link to="/auth" className="hidden md:block">
-                <Button variant="outline" size="sm" className="data text-xs uppercase">
-                  Sign in
-                </Button>
-              </Link>
-            )}
             <button
               type="button"
               aria-label={open ? "Close menu" : "Open menu"}
