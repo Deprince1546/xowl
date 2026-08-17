@@ -69,23 +69,6 @@ export function AppShell({ children }: { children: ReactNode }) {
                   {item.label}
                 </Link>
               ))}
-              {user ? (
-                <button
-                  type="button"
-                  onClick={() => void signOut()}
-                  className="data rounded-md px-3 py-3 text-left text-xs uppercase tracking-[0.18em] text-muted-foreground"
-                >
-                  Sign out
-                </button>
-              ) : (
-                <Link
-                  to="/auth"
-                  onClick={() => setOpen(false)}
-                  className="data rounded-md px-3 py-3 text-xs uppercase tracking-[0.18em] text-muted-foreground"
-                >
-                  Sign in
-                </Link>
-              )}
             </div>
             <div className="mt-4 flex justify-start sm:hidden">
               <WalletButton />
