@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as CallsRouteImport } from './routes/calls'
+import { Route as TokensAddressRouteImport } from './routes/tokens.$address'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const CallsRoute = CallsRouteImport.update({
   path: '/calls',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TokensAddressRoute = TokensAddressRouteImport.update({
+  id: '/tokens/$address',
+  path: '/tokens/$address',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/calls': typeof CallsRoute
+  '/tokens/$address': typeof TokensAddressRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/calls': typeof CallsRoute
+  '/tokens/$address': typeof TokensAddressRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/calls': typeof CallsRoute
+  '/tokens/$address': typeof TokensAddressRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ai' | '/calls'
+  fullPaths: '/' | '/ai' | '/calls' | '/tokens/$address'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ai' | '/calls'
-  id: '__root__' | '/' | '/ai' | '/calls'
+  to: '/' | '/ai' | '/calls' | '/tokens/$address'
+  id: '__root__' | '/' | '/ai' | '/calls' | '/tokens/$address'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiRoute: typeof AiRoute
   CallsRoute: typeof CallsRoute
+  TokensAddressRoute: typeof TokensAddressRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CallsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tokens/$address': {
+      id: '/tokens/$address'
+      path: '/tokens/$address'
+      fullPath: '/tokens/$address'
+      preLoaderRoute: typeof TokensAddressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiRoute: AiRoute,
   CallsRoute: CallsRoute,
+  TokensAddressRoute: TokensAddressRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
