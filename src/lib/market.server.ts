@@ -1,4 +1,4 @@
-import { DEXSCREENER_CHAIN, X_LAYER } from "./xlayer";
+import { GECKO_NETWORK, X_LAYER } from "./xlayer";
 
 export type MarketToken = {
   address: string;
@@ -6,6 +6,7 @@ export type MarketToken = {
   name: string;
   pairAddress: string;
   dexId: string;
+  imageUrl: string | null;
   priceUsd: number | null;
   marketCap: number | null;
   fdv: number | null;
@@ -21,20 +22,26 @@ export type MarketToken = {
   url: string;
 };
 
-type DexPair = {
-  chainId?: string;
-  dexId?: string;
-  url?: string;
-  pairAddress?: string;
-  baseToken?: { address?: string; name?: string; symbol?: string };
-  priceUsd?: string;
-  marketCap?: number;
-  fdv?: number;
-  liquidity?: { usd?: number };
-  volume?: Record<string, number>;
-  priceChange?: Record<string, number>;
-  txns?: Record<string, { buys?: number; sells?: number }>;
-  pairCreatedAt?: number;
+type GeckoPool = {
+  id?: string;
+  attributes?: {
+    address?: string;
+    name?: string;
+    pool_created_at?: string;
+    base_token_price_usd?: string;
+    fdv_usd?: string;
+    market_cap_usd?: string;
+    reserve_in_usd?: string;
+    price_change_percentage?: Record<string, string>;
+    transactions?: Record<string, { buys?: number; sells?: number }>;
+    volume_usd?: Record<string, string>;
+  };
+  relationships?: { base_token?: { data?: { id?: string } }; dex?: { data?: { id?: string } } };
+};
+
+type GeckoToken = {
+  id?: string;
+  attributes?: { address?: string; name?: string; symbol?: string; image_url?: string | null };
 };
 
 const num = (value: unknown) => {
@@ -42,69 +49,81 @@ const num = (value: unknown) => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
-export function mapPair(pair: DexPair): MarketToken {
+const GECKO = `https://api.geckoterminal.com/api/v2/networks/${GECKO_NETWORK}`;
+
+function mapPool(pool: GeckoPool, tokens: Map<string, GeckoToken>): MarketToken | null {
+  const attrs = pool.attributes ?? {};
+  const tokenId = pool.relationships?.base_token?.data?.id ?? "";
+  const token = tokens.get(tokenId);
+  const address = token?.attributes?.address ?? tokenId.split("_")[1] ?? "";
+  if (!address) return null;
+  const created = attrs.pool_created_at ? Date.parse(attrs.pool_created_at) : null;
   return {
-    address: pair.baseToken?.address ?? "",
-    symbol: pair.baseToken?.symbol ?? "?",
-    name: pair.baseToken?.name ?? "Unknown",
-    pairAddress: pair.pairAddress ?? "",
-    dexId: pair.dexId ?? "",
-    priceUsd: num(pair.priceUsd),
-    marketCap: num(pair.marketCap),
-    fdv: num(pair.fdv),
-    liquidityUsd: num(pair.liquidity?.usd),
-    volume24h: num(pair.volume?.["h24"]),
-    change5m: num(pair.priceChange?.["m5"]),
-    change1h: num(pair.priceChange?.["h1"]),
-    change6h: num(pair.priceChange?.["h6"]),
-    change24h: num(pair.priceChange?.["h24"]),
-    buys24h: num(pair.txns?.["h24"]?.buys),
-    sells24h: num(pair.txns?.["h24"]?.sells),
-    pairCreatedAt: num(pair.pairCreatedAt),
-    url: pair.url ?? "",
+    address,
+    symbol: token?.attributes?.symbol ?? attrs.name?.split(" / ")[0] ?? "?",
+    name: token?.attributes?.name ?? attrs.name ?? "Unknown",
+    imageUrl: token?.attributes?.image_url ?? null,
+    pairAddress: attrs.address ?? "",
+    dexId: pool.relationships?.dex?.data?.id ?? "",
+    priceUsd: num(attrs.base_token_price_usd),
+    marketCap: num(attrs.market_cap_usd),
+    fdv: num(attrs.fdv_usd),
+    liquidityUsd: num(attrs.reserve_in_usd),
+    volume24h: num(attrs.volume_usd?.["h24"]),
+    change5m: num(attrs.price_change_percentage?.["m5"]),
+    change1h: num(attrs.price_change_percentage?.["h1"]),
+    change6h: num(attrs.price_change_percentage?.["h6"]),
+    change24h: num(attrs.price_change_percentage?.["h24"]),
+    buys24h: attrs.transactions?.["h24"]?.buys ?? null,
+    sells24h: attrs.transactions?.["h24"]?.sells ?? null,
+    pairCreatedAt: Number.isFinite(created) ? created : null,
+    url: `https://www.geckoterminal.com/${GECKO_NETWORK}/pools/${attrs.address ?? ""}`,
   };
 }
 
-async function dexFetch(path: string): Promise<DexPair[]> {
-  const response = await fetch(`https://api.dexscreener.com${path}`, {
-    headers: { accept: "application/json" },
-  });
+async function geckoFetch(path: string): Promise<MarketToken[]> {
+  const response = await fetch(`${GECKO}${path}`, { headers: { accept: "application/json" } });
   if (!response.ok) {
-    throw new Error(`DEX Screener request failed [${response.status}]: ${await response.text()}`);
+    throw new Error(`Market request failed [${response.status}]: ${await response.text()}`);
   }
-  const json = (await response.json()) as { pairs?: DexPair[] } | DexPair[];
-  const pairs = Array.isArray(json) ? json : (json.pairs ?? []);
-  return pairs.filter((pair) => pair?.chainId === DEXSCREENER_CHAIN);
-}
+  const json = (await response.json()) as { data?: GeckoPool[] | GeckoPool; included?: GeckoToken[] };
+  const pools = Array.isArray(json.data) ? json.data : json.data ? [json.data] : [];
+  const tokens = new Map((json.included ?? []).map((entry) => [entry.id ?? "", entry]));
+  const mapped = pools.map((pool) => mapPool(pool, tokens)).filter((token): token is MarketToken => Boolean(token));
 
-function dedupeByToken(pairs: DexPair[]): MarketToken[] {
   const best = new Map<string, MarketToken>();
-  for (const pair of pairs) {
-    const mapped = mapPair(pair);
-    if (!mapped.address) continue;
-    const existing = best.get(mapped.address.toLowerCase());
-    if (!existing || (mapped.liquidityUsd ?? 0) > (existing.liquidityUsd ?? 0)) {
-      best.set(mapped.address.toLowerCase(), mapped);
-    }
+  for (const token of mapped) {
+    const key = token.address.toLowerCase();
+    const existing = best.get(key);
+    if (!existing || (token.liquidityUsd ?? 0) > (existing.liquidityUsd ?? 0)) best.set(key, token);
   }
   return [...best.values()];
 }
 
-export async function discoverXLayerTokens(query = "xlayer"): Promise<MarketToken[]> {
-  const searches = await Promise.allSettled([
-    dexFetch(`/latest/dex/search?q=${encodeURIComponent(query)}`),
-    dexFetch(`/latest/dex/search?q=${encodeURIComponent("OKB")}`),
+export async function discoverXLayerTokens(): Promise<MarketToken[]> {
+  const results = await Promise.allSettled([
+    geckoFetch("/pools?sort=h24_volume_usd_desc&include=base_token&page=1"),
+    geckoFetch("/trending_pools?include=base_token&page=1"),
+    geckoFetch("/new_pools?include=base_token&page=1"),
   ]);
-  const pairs = searches.flatMap((result) => (result.status === "fulfilled" ? result.value : []));
-  return dedupeByToken(pairs)
+  const merged = new Map<string, MarketToken>();
+  for (const result of results) {
+    if (result.status !== "fulfilled") continue;
+    for (const token of result.value) {
+      const key = token.address.toLowerCase();
+      const existing = merged.get(key);
+      if (!existing || (token.liquidityUsd ?? 0) > (existing.liquidityUsd ?? 0)) merged.set(key, token);
+    }
+  }
+  return [...merged.values()]
     .filter((token) => (token.liquidityUsd ?? 0) > 500)
     .sort((a, b) => (b.volume24h ?? 0) - (a.volume24h ?? 0));
 }
 
 export async function fetchTokenMarket(address: string): Promise<MarketToken | null> {
-  const pairs = await dexFetch(`/token-pairs/v1/${DEXSCREENER_CHAIN}/${address}`).catch(() => []);
-  const tokens = dedupeByToken(pairs);
-  return tokens[0] ?? null;
+  const tokens = await geckoFetch(`/tokens/${address}/pools?include=base_token`).catch(() => []);
+  const match = tokens.find((token) => token.address.toLowerCase() === address.toLowerCase());
+  return match ?? tokens[0] ?? null;
 }
 
 type RpcResult = string | null;

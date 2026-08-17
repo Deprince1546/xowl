@@ -7,7 +7,7 @@ export const X_LAYER = {
   blockExplorerUrls: ["https://www.oklink.com/xlayer"],
 } as const;
 
-export const DEXSCREENER_CHAIN = "xlayer";
+export const GECKO_NETWORK = "x-layer";
 
 export function shortAddress(address?: string | null, size = 4) {
   if (!address) return "";
