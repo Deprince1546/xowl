@@ -43,16 +43,13 @@ export const EXCLUDED_SYMBOLS = new Set(
 );
 
 const EXCLUDED_PATTERNS = [
-  /^w[a-z]{2,4}$/i, // wrapped majors (wETH, wBTC, wOKB…)
   /bridged/i,
   /\bLP\b/i,
   /^slp$/i,
   /uni-v[23]/i,
   /pool token/i,
   /liquidity/i,
-  /^st[a-z]{2,5}$/i, // liquid staking derivatives
   /vault/i,
-  /^a[a-z]{3,5}$/i, // aTokens
   /stable/i,
   /\bUSD\b/i,
 ];
