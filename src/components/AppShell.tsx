@@ -3,7 +3,8 @@ import { useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
 
 import { WalletButton } from "@/components/WalletButton";
-import logoAsset from "@/assets/xowl-logo.jpg.asset.json";
+
+const XOWL_LOGO = "/xowl-logo.jpg";
 
 const NAV = [
   { to: "/", label: "Radar" },
@@ -21,7 +22,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 py-3 sm:flex sm:justify-between sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-3">
             <img
-              src={logoAsset.url}
+              src={XOWL_LOGO}
               alt="XOwl logo"
               className="h-9 w-9 shrink-0 rounded-md border border-border object-cover"
             />

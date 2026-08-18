@@ -5,6 +5,7 @@ import {
   askCoasty,
   discoverXLayerTokens,
   fetchOnchain,
+  fetchTokenCandles,
   fetchTokenMarket,
   localReasoning,
   scoreToken,
@@ -14,6 +15,11 @@ export const getDiscoveryFeed = createServerFn({ method: "GET" }).handler(async 
   const tokens = await discoverXLayerTokens();
   return { tokens: tokens.slice(0, 24), fetchedAt: new Date().toISOString() };
 });
+
+export const getTokenChart = createServerFn({ method: "GET" })
+  .inputValidator((input) => z.object({ address: z.string().min(4), bar: z.string().min(2).max(4) }).parse(input))
+  .handler(async ({ data }) => fetchTokenCandles(data.address, data.bar));
+
 
 export const getTokenIntel = createServerFn({ method: "GET" })
   .inputValidator((input) => z.object({ address: z.string().min(4) }).parse(input))
