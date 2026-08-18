@@ -53,7 +53,9 @@ const EXCLUDED_PATTERNS = [
   /liquidity/i,
   /vault/i,
   /stable/i,
-  /\bUSD\b/i,
+  /usd/i,
+  /\beth\b/i,
+  /\bbtc\b/i,
 ];
 
 const EXCLUDED_NAME_WORDS = [
