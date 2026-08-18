@@ -8,7 +8,8 @@ import { ChangePill, TokenCard } from "@/components/TokenCard";
 import { Button } from "@/components/ui/button";
 import { getDiscoveryFeed } from "@/lib/market.functions";
 import { formatUsd } from "@/lib/xlayer";
-import logoAsset from "@/assets/xowl-logo.jpg.asset.json";
+
+const XOWL_LOGO = "/xowl-logo.jpg";
 
 const HERO_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_133255_956f653f-5d80-4b06-abd5-0f46c98b60fa.mp4";
@@ -112,7 +113,7 @@ function Home() {
               <p className="data truncate text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
                 Live radar slideshow
               </p>
-              <img src={logoAsset.url} alt="" className="h-8 w-8 shrink-0 rounded-md object-cover opacity-80" />
+              <img src={XOWL_LOGO} alt="" className="h-8 w-8 shrink-0 rounded-md object-cover opacity-80" />
             </div>
 
             {isLoading && <p className="data mt-8 text-xs text-muted-foreground">Scanning X Layer pairs…</p>}
