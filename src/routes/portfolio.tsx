@@ -18,6 +18,8 @@ export const Route = createFileRoute("/portfolio")({
       { property: "og:title", content: "Portfolio — XOwl" },
       { property: "og:description", content: "Your X Layer trades, targets and watchlist in one terminal." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://xowl.lovable.app/xowl-logo.jpg" },
+      { name: "twitter:image", content: "https://xowl.lovable.app/xowl-logo.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),

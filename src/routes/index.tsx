@@ -31,6 +31,8 @@ export const Route = createFileRoute("/")({
         content: "Live X Layer token radar, AI scoring, transparent call history and auto-trade controls.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://xowl.lovable.app/xowl-logo.jpg" },
+      { name: "twitter:image", content: "https://xowl.lovable.app/xowl-logo.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),

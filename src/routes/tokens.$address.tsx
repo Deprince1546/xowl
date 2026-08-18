@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/AppShell";
 import { AutoTradePanel } from "@/components/AutoTradePanel";
 import { ChangePill } from "@/components/TokenCard";
+import { TokenChart } from "@/components/TokenChart";
 import { getTokenIntel } from "@/lib/market.functions";
 import { explorerToken, formatUsd, shortAddress } from "@/lib/xlayer";
 
@@ -18,6 +19,8 @@ export const Route = createFileRoute("/tokens/$address")({
       { property: "og:title", content: "XOwl token intel" },
       { property: "og:description", content: "Live X Layer token analysis with AI reasoning and risk scoring." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://xowl.lovable.app/xowl-logo.jpg" },
+      { name: "twitter:image", content: "https://xowl.lovable.app/xowl-logo.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
@@ -99,6 +102,8 @@ function TokenPage() {
                 ))}
               </dl>
 
+              <TokenChart address={market.address} />
+
               {scores && (
                 <div className="mt-8 rounded-lg border border-border bg-card p-5">
                   <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
@@ -142,7 +147,9 @@ function TokenPage() {
                   <dl className="data mt-4 grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
                     {[
                       ["Holders", onchain.holders?.toLocaleString() ?? "n/a"],
-                      ["Transfers", onchain.transferCount?.toLocaleString() ?? "n/a"],
+                      ["24h txs", onchain.transferCount?.toLocaleString() ?? "n/a"],
+                      ["Unique traders", onchain.uniqueTraders?.toLocaleString() ?? "n/a"],
+                      ["Smart money", onchain.whaleWallets?.toLocaleString() ?? "0"],
                       ["Contract", onchain.isContract ? "verified bytecode" : "no code"],
                       ["Block", onchain.blockNumber?.toLocaleString() ?? "n/a"],
                     ].map(([label, value]) => (

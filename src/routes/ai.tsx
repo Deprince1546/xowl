@@ -18,6 +18,8 @@ export const Route = createFileRoute("/ai")({
       { property: "og:title", content: "XOwl AI Terminal" },
       { property: "og:description", content: "Ask XOwl AI about any X Layer token, wallet flow or risk pattern." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://xowl.lovable.app/xowl-logo.jpg" },
+      { name: "twitter:image", content: "https://xowl.lovable.app/xowl-logo.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
