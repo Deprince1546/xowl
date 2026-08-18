@@ -55,6 +55,8 @@ const QUOTE_TOKENS = [
   "0x5a77f1443d16ee5761d310e38b62f77f726bc71c", // WETH
 ];
 
+const symbolCache = new Map<string, { symbol: string; dexName: string }>();
+
 type Candidate = { address: string; symbol: string; name: string; trades: number; dexName: string };
 
 async function okxMajorAddressSet() {
@@ -88,6 +90,9 @@ async function discoverCandidates(majorAddresses: Set<string>): Promise<Candidat
           });
       }
     }
+  }
+  for (const candidate of found.values()) {
+    symbolCache.set(candidate.address, { symbol: candidate.symbol, dexName: candidate.dexName });
   }
   return [...found.values()].sort((a, b) => b.trades - a.trades).slice(0, 40);
 }
@@ -161,11 +166,14 @@ export async function fetchTokenMarket(address: string): Promise<MarketToken | n
     const info = (await okxPriceInfo([target])).get(target);
     if (info && num(info.price) != null) {
       const trades = await okxTrades(target, 50).catch(() => [] as OkxTrade[]);
+      const cached = symbolCache.get(target);
       const symbol =
         trades
           .flatMap((t) => t.changedTokenInfo ?? [])
-          .find((leg) => (leg.tokenAddress ?? "").toLowerCase() === target)?.tokenSymbol ?? "?";
-      const dexName = trades[0]?.dexName ?? "";
+          .find((leg) => (leg.tokenAddress ?? "").toLowerCase() === target)?.tokenSymbol ??
+        cached?.symbol ??
+        "?";
+      const dexName = trades[0]?.dexName ?? cached?.dexName ?? "";
       const token = fromPriceInfo({ address: target, symbol, name: symbol, trades: trades.length, dexName }, info);
       const flow = tradeFlow(trades, target);
       token.buys24h = flow.buys;
@@ -480,6 +488,7 @@ export async function askCoasty(prompt: string, system: string): Promise<string>
         },
         body: JSON.stringify({
           model: target.model,
+          max_tokens: 700,
           messages: [
             { role: "system", content: system },
             { role: "user", content: prompt },

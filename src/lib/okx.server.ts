@@ -52,6 +52,10 @@ async function okxRequest<T>(path: string, method: "GET" | "POST" = "GET", body?
       },
       ...(payload ? { body: payload } : {}),
     });
+    if (response.status === 429) {
+      await new Promise((r) => setTimeout(r, 500));
+      return okxRequest<T>(path, method, body, ttl);
+    }
     if (!response.ok) return null;
     const json = (await response.json()) as OkxResponse<T>;
     if (json.code && json.code !== "0") {
