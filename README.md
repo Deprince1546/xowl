@@ -1,556 +1,598 @@
-# Echo ID Hero
+# 🦉 XOwl
 
-‎Recreate this exact full-viewport dark hero landing page for “ECHOID” — a voice-identity product for the E network. Match every detail below precisely. Do not invent extra sections, cards, stats, or decorative overlays. Desktop composition: full-bleed cinematic background video on the left/center with a right-aligned signup panel; black negative space on the left; UI pinned top (nav), right (form), and bottom (legal).
-
+‎### AI-Powered Memecoin Intelligence for X Layer
+‎
+‎XOwl is an AI-powered memecoin intelligence platform built specifically for the **X Layer ecosystem**.
+‎
+‎It continuously analyzes emerging X Layer memecoins using onchain activity, market data, holder behavior, whale activity, liquidity, trading activity, token age, and social momentum to filter market noise and surface high-potential opportunities.
+‎
+‎XOwl is designed to help users discover promising tokens earlier, understand the reasons behind a signal, track the performance of every XOwl Call, and optionally use automated trading strategies.
+‎
+‎
+‎
+‎## 🚀 Live Demo
+‎
+‎**[Launch XOwl](https://xowl.vercel.app/)**
+‎
+‎**[GitHub Repository](https://github.com/Deprince1546/xowl)**
+‎
+‎
+‎
+‎## 🎯 What XOwl Does
+‎
+‎The X Layer memecoin market can contain hundreds of tokens, making it difficult to distinguish genuine opportunities from low-quality or potentially dangerous projects.
+‎
+‎XOwl solves this by creating an intelligence pipeline:
+‎
+‎```text
+‎X Layer Token Discovery
+‎        ↓
+‎Onchain Analysis
+‎        ↓
+‎Holder & Whale Analysis
+‎        ↓
+‎Liquidity & Trading Analysis
+‎        ↓
+‎Social / Market Momentum
+‎        ↓
+‎Risk Detection
+‎        ↓
+‎XOwl Intelligence Score
+‎        ↓
+‎AI Analysis
+‎        ↓
+‎Top XOwl Calls
+‎        ↓
+‎Performance Tracking
+‎
+‎Instead of overwhelming users with every token available, XOwl focuses on filtering the market down to the strongest candidates.
+‎
+‎
+‎
+‎
+‎🧠 Core Features
+‎
+‎🦉 XOwl Radar
+‎
+‎Continuously monitors emerging X Layer memecoins and identifies potential opportunities.
+‎
+‎The radar focuses primarily on early-stage tokens, particularly tokens within approximately:
+‎
+‎$20K – $1M market capitalization
+‎
+‎A few days to approximately two weeks old
+‎
+‎Active liquidity
+‎
+‎Growing trading activity
+‎
+‎Increasing holder activity
+‎
+‎
+‎Tokens are filtered before being considered for an XOwl Call.
+‎
+‎
+‎
+‎
+‎🔎 AI Token Analysis
+‎
+‎Users can enter an X Layer token contract address and request an analysis.
+‎
+‎XOwl can evaluate:
+‎
+‎Token information
+‎
+‎Market capitalization
+‎
+‎Price
+‎
+‎Liquidity
+‎
+‎Trading volume
+‎
+‎Holder distribution
+‎
+‎Holder growth
+‎
+‎Whale activity
+‎
+‎Smart-money activity
+‎
+‎Deployer behavior
+‎
+‎Transaction activity
+‎
+‎Token age
+‎
+‎Market momentum
+‎
+‎Risk indicators
+‎
+‎Social/hype signals
+‎
+‎
+‎The AI then turns the collected data into an understandable analysis.
+‎
+‎
+‎
+‎
+‎📡 XOwl Calls
+‎
+‎XOwl identifies a small number of high-confidence opportunities from the larger candidate pool.
+‎
+‎Each call records information such as:
+‎
+‎Token
+‎
+‎Contract address
+‎
+‎Call time
+‎
+‎Call price
+‎
+‎Call market cap
+‎
+‎Liquidity
+‎
+‎XOwl score
+‎
+‎Risk level
+‎
+‎Reason for the call
+‎
+‎
+‎This allows users to see exactly when and why a token was identified.
+‎
+‎
+‎
+‎
+‎📈 Call Performance Tracking
+‎
+‎XOwl keeps historical records of its calls.
+‎
+‎For example:
+‎
+‎🦉 XOwl CALL
+‎
+‎XLIFE
+‎
+‎Called at: $20K Market Cap
+‎Current:   $100K Market Cap
+‎
+‎+5X Since Call
+‎
+‎XOwl can track performance milestones such as:
+‎
+‎2X
+‎
+‎5X
+‎
+‎10X
+‎
+‎25X
+‎
+‎50X
+‎
+‎100X
+‎
+‎
+‎Historical call data can also be used to measure the real performance of the intelligence system.
+‎
+‎
+‎
+‎
+‎🤖 AI Terminal
+‎
+‎The XOwl AI terminal allows users to ask questions about tokens and the X Layer ecosystem.
+‎
+‎Examples:
+‎
+‎Analyze this token.
+‎
+‎Why did XOwl call this token?
+‎
+‎Which X Layer memecoins are showing strong holder growth?
+‎
+‎What whales are accumulating this token?
+‎
+‎Compare these three tokens.
+‎
+‎Which XOwl Calls are currently above 5X?
+‎
+‎What changed since XOwl called this token?
+‎
+‎The AI is designed to use live platform data rather than relying solely on generic model knowledge.
+‎
+‎
+‎
+‎
+‎💰 Auto Trade
+‎
+‎Users can connect their X Layer wallet and configure an optional automated trading strategy.
+‎
+‎Users can specify:
+‎
+‎Trading amount
+‎
+‎Target multiplier
+‎
+‎Take-profit conditions
+‎
+‎
+‎For example:
+‎
+‎Entry: $20K Market Cap
+‎Target: 10X
+‎Trade Amount: 10 OKB
+‎
+‎The trading system is designed around explicit user authorization and deterministic execution conditions.
+‎
+‎
+‎
+‎
+‎👛 X Layer Wallet Integration
+‎
+‎XOwl supports wallet-based interaction with the X Layer ecosystem.
+‎
+‎Connected users can access features such as:
+‎
+‎XOwl Calls
+‎
+‎Call tracking
+‎
+‎Personalized notifications
+‎
+‎Auto Trade configuration
+‎
+‎Token interaction
+‎
+‎
+‎
+‎
+‎
+‎📊 Intelligence Architecture
+‎
+‎XOwl combines multiple sources of information rather than relying on a single data provider.
+‎
+‎Onchain Intelligence — 60%
+‎
+‎The primary intelligence layer focuses on X Layer onchain activity, including:
+‎
+‎Transactions
+‎
+‎Holders
+‎
+‎Wallet activity
+‎
+‎Whale movements
+‎
+‎Liquidity
+‎
+‎Token behavior
+‎
+‎Deployer activity
+‎
+‎Smart-money signals
+‎
+‎
+‎Market Intelligence — 40%
+‎
+‎Market data is used to understand:
+‎
+‎Price movement
+‎
+‎Trading volume
+‎
+‎Liquidity
+‎
+‎Market capitalization
+‎
+‎Trading pairs
+‎
+‎Market momentum
+‎
+‎
+‎AI Reasoning
+‎
+‎The collected data is passed into XOwl's AI layer to interpret the signals and produce human-readable analysis.
+‎
+‎
+‎
+‎
+‎🛡️ Risk Filtering
+‎
+‎XOwl is designed to filter obvious sources of noise and risk.
+‎
+‎The system excludes or deprioritizes assets such as:
+‎
+‎Stablecoins
+‎
+‎OKB
+‎
+‎WOKB / wrapped assets
+‎
+‎Major wrapped assets
+‎
+‎Major bridged assets
+‎
+‎LP tokens
+‎
+‎Infrastructure tokens
+‎
+‎Protocol tokens
+‎
+‎Obvious non-memecoin assets
+‎
+‎Tokens with critical risk indicators
+‎
+‎
+‎A token appearing on the radar does not automatically make it an XOwl Call.
+‎
+‎
+‎
+‎🏗️ Technology Stack
+‎
+‎XOwl is built using modern web technologies.
+‎
+‎Frontend
+‎
+‎React
+‎
+‎TypeScript
+‎
+‎Vite
+‎
+‎HTML
+‎
+‎CSS
+‎
+‎
+‎Backend / Data
+‎
+‎Supabase
+‎
+‎X Layer blockchain infrastructure
+‎
+‎OKX Onchain OS
+‎
+‎DEX market data
+‎
+‎
+‎AI
+‎
+‎OpenRouter
+‎
+‎Coasty AI capabilities
+‎
+‎
+‎Deployment
+‎
+‎Vercel
+‎
+‎GitHub
+‎
+‎
+‎
+‎
+‎
+‎📁 Project Structure
+‎
+‎xowl/
+‎├── public/
+‎├── src/
+‎│   ├── components/
+‎│   ├── pages/
+‎│   ├── hooks/
+‎│   ├── lib/
+‎│   └── ...
+‎├── supabase/
+‎├── package.json
+‎├── tsconfig.json
+‎├── vite.config.ts
+‎└── README.md
+‎
+‎
+‎
+‎
+‎⚙️ Running XOwl Locally
+‎
+‎1. Clone the repository
+‎
+‎git clone https://github.com/Deprince1546/xowl.git
+‎cd xowl
+‎
+‎2. Install dependencies
+‎
+‎npm install
+‎
+‎3. Configure environment variables
+‎
+‎Create a local environment file and configure the required project credentials.
+‎
+‎Never commit private API credentials, wallet keys, secret keys, or passphrases to GitHub.
+‎
+‎4. Start the development server
+‎
+‎npm run dev
+‎
+‎The application will be available through the local development URL provided by Vite.
+‎
+‎
+‎
+‎
+‎🔐 Security
+‎
+‎XOwl works with blockchain and third-party API infrastructure.
+‎
+‎Sensitive credentials must always remain server-side.
+‎
+‎Never expose:
+‎
+‎API secret keys
+‎
+‎API passphrases
+‎
+‎Private wallet keys
+‎
+‎Seed phrases
+‎
+‎Service-role credentials
+‎
+‎
+‎Do not commit secrets to GitHub.
+‎
+‎
+‎
+‎
+‎🤝 Contributing
+‎
+‎Contributions are welcome.
+‎
+‎1. Fork the repository
+‎
+‎Create your own fork of the XOwl repository.
+‎
+‎2. Create a feature branch
+‎
+‎git checkout -b feature/your-feature
+‎
+‎3. Make your changes
+‎
+‎Follow the existing project structure and coding conventions.
+‎
+‎4. Test your changes
+‎
+‎Make sure the application builds and runs correctly before submitting a contribution.
+‎
+‎5. Commit your changes
+‎
+‎git add .
+‎git commit -m "Add: your feature"
+‎
+‎6. Push your branch
+‎
+‎git push origin feature/your-feature
+‎
+‎7. Open a Pull Request
+‎
+‎Explain:
+‎
+‎What you changed
+‎
+‎Why you changed it
+‎
+‎How you tested it
+‎
+‎Any limitations or known issues
+‎
+‎
+‎
+‎
+‎🧪 Development Principles
+‎
+‎When contributing to XOwl:
+‎
+‎Prefer real blockchain data over mock data.
+‎
+‎Never fabricate token statistics.
+‎
+‎Keep X Layer as the primary ecosystem focus.
+‎
+‎Preserve the distinction between token discovery and an XOwl Call.
+‎
+‎Keep sensitive credentials server-side.
+‎
+‎Avoid unnecessary dependencies.
+‎
+‎Maintain responsive UI behavior.
+‎
+‎Test blockchain/API integrations before submitting changes.
+‎
+‎
+‎
+‎
+‎⚠️ Disclaimer
+‎
+‎XOwl provides cryptocurrency market intelligence and automated analysis.
+‎
+‎An XOwl Call is not a guarantee of profit or future performance.
+‎
+‎Memecoins are highly volatile and can lose most or all of their value.
+‎
+‎Users are responsible for their own trading decisions and should conduct independent research before interacting with any token or trading strategy.
+‎
+‎
+‎
+‎
+‎🗺️ Roadmap
+‎
+‎Phase 1 — Intelligence
+‎
+‎X Layer token discovery
+‎
+‎Memecoin filtering
+‎
+‎Onchain analysis
+‎
+‎Market analysis
+‎
+‎AI token analysis
+‎
+‎XOwl scoring
+‎
+‎
+‎Phase 2 — Signal Tracking
+‎
+‎XOwl Calls
+‎
+‎Historical call records
+‎
+‎Performance tracking
+‎
+‎Multiplier notifications
+‎
+‎Call analytics
+‎
+‎
+‎Phase 3 — Execution
+‎
+‎X Layer wallet integration
+‎
+‎User-configured trading
+‎
+‎Automated take-profit strategies
+‎
+‎Trade monitoring
+‎
+‎
+‎Phase 4 — Advanced Intelligence
+‎
+‎Deeper smart-money analysis
+‎
+‎Social sentiment
+‎
+‎Advanced wallet intelligence
+‎
+‎Improved risk detection
+‎
+‎Historical model evaluation
 ‎
 
-‎═══════════════════════════════════════
-
-‎PAGE META
-
-‎═══════════════════════════════════════
-
-‎- Document title: ECHOID — Your voice ID to the E network
-
-‎- Lang: en
-
-‎- Pure black page background (#000)
-
-‎- Antialiased text
-
-‎- Single full-viewport section only (no other page sections)
-
 ‎
-
-‎═══════════════════════════════════════
-
-‎EXACT MEDIA URLS (CloudFront — use these verbatim)
-
-‎═══════════════════════════════════════
-
-‎Background video (MP4):
-
-‎https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_133255_956f653f-5d80-4b06-abd5-0f46c98b60fa.mp4
-
+‎🌐 Links
 ‎
-
-‎Poster / fallback still (PNG):
-
-‎https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_132328_5f9029c8-218f-4489-82b6-29ff2849920e.png
-
+‎Live Demo: https://xowl.vercel.app/
 ‎
-
-‎Video attributes: autoPlay, muted, loop, playsInline, preload="auto"
-
-‎Video CSS: width/height 100%, object-fit: cover, object-position: center
-
-‎Media layer: position absolute, inset 0, z-index -1, black background behind video
-
-‎Preconnect to: https://d8j0ntlcm91z4.cloudfront.net
-
+‎GitHub: https://github.com/Deprince1546/xowl
 ‎
-
-‎Video content (for reference): dark cinematic AI/surreal face sequence — abstract metallic/glass facial forms, cool dark palette, motion graphic identity vibe. Full-bleed edge-to-edge; never inset, never in a card.
-
 ‎
-
-‎═══════════════════════════════════════
-
-‎FONTS (exact Google Fonts)
-
-‎═══════════════════════════════════════
-
-‎Load from Google Fonts:
-
-‎family=Sora:wght@200;300;400
-
-‎family=JetBrains+Mono:wght@300;400;500
-
-‎display=swap
-
-‎Preconnect fonts.googleapis.com and fonts.gstatic.com
-
 ‎
-
-‎CSS stacks:
-
-‎--font-display: "Sora", "Helvetica Neue", Helvetica, Arial, sans-serif
-
-‎--font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace
-
+‎🦉 Built for X Layer
 ‎
-
-‎Usage map:
-
-‎- Sora 200: nav logo “ECHOID”, hero H1 “ECHOID”
-
-‎- Sora 300: email input, legal footer text
-
-‎- JetBrains Mono 400: nav links, JOIN UP CTA, chip, buttons, referral link, mobile menu links/CTA
-
-‎- JetBrains Mono 300: tagline “YOUR VOICE ID TO THE E NETWORK.”
-
+‎XOwl is built with one goal:
 ‎
-
-‎═══════════════════════════════════════
-
-‎DESIGN TOKENS
-
-‎═══════════════════════════════════════
-
-‎--bg: #000000
-
-‎--text: #ffffff
-
-‎--text-dim: rgba(255,255,255,0.62)
-
-‎--text-dimmer: rgba(255,255,255,0.42)
-
-‎--line: rgba(255,255,255,0.14)
-
-‎--line-strong: rgba(255,255,255,0.26)
-
-‎--fill-ghost: rgba(255,255,255,0.05)
-
-‎--fill-solid: rgba(255,255,255,0.10)
-
-‎--gutter: clamp(20px, 5vw, 100px)
-
-‎--ease-premium: cubic-bezier(0.16, 1, 0.3, 1)
-
+‎> Filter the noise. Find the signal.
 ‎
-
-‎═══════════════════════════════════════
-
-‎LAYOUT SHELL
-
-‎═══════════════════════════════════════
-
-‎.hero:
-
-‎- position relative, width 100%
-
-‎- height: 100vh AND 100svh
-
-‎- min-height: 640px (if max-height ≤640px, min-height becomes 100svh)
-
-‎- overflow hidden
-
-‎- CSS grid: grid-template-rows: auto 1fr auto
-
-‎- isolation: isolate
-
 ‎
-
-‎Row 1 = navbar
-
-‎Row 2 = right-aligned form body (flex end / center on mobile)
-
-‎Row 3 = legal footer
-
 ‎
-
-‎═══════════════════════════════════════
-
-‎SCRIM (dual gradient overlay on video)
-
-‎═══════════════════════════════════════
-
-‎Desktop (≥721px) — two stacked linear-gradients:
-
-‎1) to right:
-
-‎   transparent 0% → transparent 45% → rgba(0,0,0,0.45) 72% → rgba(0,0,0,0.72) 100%
-
-‎2) to bottom:
-
-‎   rgba(0,0,0,0.55) 0% → transparent 22% → transparent 78% → rgba(0,0,0,0.65) 100%
-
-‎
-
-‎Mobile (≤720px) — single bottom gradient:
-
-‎rgba(0,0,0,0.6) 0% → rgba(0,0,0,0.25) 30% → rgba(0,0,0,0.75) 100%
-
-‎
-
-‎═══════════════════════════════════════
-
-‎NAVBAR (top)
-
-‎═══════════════════════════════════════
-
-‎Flex space-between, align center, gap 32px
-
-‎Padding: clamp(20px, 2.4vw, 34px) horizontal gutter; respect safe-area insets
-
-‎
-
-‎LEFT — Logo link “ECHOID”
-
-‎- Sora 200
-
-‎- font-size: clamp(20px, 1.75vw, 30px)
-
-‎- letter-spacing: 0.16em
-
-‎- white, no underline, line-height 1
-
-‎
-
-‎RIGHT — nav cluster (gap clamp(24px, 3.2vw, 62px)):
-
-‎A) Desktop links (≥901px): Story, Platforms, Identity, Contact
-
-‎   - JetBrains Mono 400
-
-‎   - font-size: clamp(11px, 0.78vw, 14px)
-
-‎   - letter-spacing: 0.18em
-
-‎   - text-transform: uppercase
-
-‎   - white; hover → --text-dim
-
-‎   - transition color 0.25s ease
-
-‎   - link gap: clamp(20px, 2.8vw, 56px)
-
-‎   - hrefs: #story #platforms #identity #contact
-
-‎
-
-‎B) Desktop CTA “Join up” (renders as JOIN UP via uppercase)
-
-‎   - same mono type as links
-
-‎   - padding: clamp(12px,1vw,17px) clamp(20px,1.8vw,32px)
-
-‎   - border: 1px solid --line-strong
-
-‎   - hover: background --fill-ghost, border-color rgba(255,255,255,0.5)
-
-‎   - transition background+border 0.25s ease
-
-‎   - href #join
-
-‎
-
-‎C) Mobile hamburger (≤900px only; desktop links+CTA hidden)
-
-‎   - 44×44 hit target, 3 bars 22px wide × 1px tall, white
-
-‎   - bars at top 16/22/28px, centered with translateX(-50%)
-
-‎   - Active (X morph): bar1 rotate(45deg) to top 22px; bar2 opacity 0 + scaleX(0); bar3 rotate(-45deg) to top 22px
-
-‎   - transition: transform 0.45s --ease-premium, opacity 0.25s ease
-
-‎
-
-‎═══════════════════════════════════════
-
-‎MOBILE MENU OVERLAY
-
-‎═══════════════════════════════════════
-
-‎Fixed fullscreen, z-index 50 (nav is 60)
-
-‎Background: rgba(4,4,6,0.94)
-
-‎backdrop-filter: blur(28px) saturate(140%)
-
-‎Closed: clip-path circle(3% at calc(100% - 42px) 42px), opacity 0, pointer-events none
-
-‎Open: clip-path circle(150% at same origin), opacity 1, pointer-events auto
-
-‎Transition: clip-path 0.7s --ease-premium, opacity 0.45s ease
-
-‎Centered column of uppercase mono links (Story/Platforms/Identity/Contact) then bordered “Join up”
-
-‎Link size: clamp(20px, 5.5vw, 28px), letter-spacing 0.14em
-
-‎CTA: letter-spacing 0.22em, padding 16px 40px, border 1px --line-strong
-
-‎Stagger entrance: each item starts opacity 0 + translateY(16px); when open → opacity 1 + translateY(0)
-
-‎Delay: calc(180ms + var(--i) * 70ms) where i = 0..3 for links, i=4 for CTA
-
-‎Transition on items: opacity 0.4s ease, transform 0.5s --ease-premium
-
-‎Escape closes; click backdrop closes; body.menu-open { overflow:hidden }; restore focus; auto-close at ≥901px
-
-‎
-
-‎═══════════════════════════════════════
-
-‎RIGHT PANEL (voice entry signup)
-
-‎═══════════════════════════════════════
-
-‎hero__body: flex align center, justify flex-end (center on ≤720px), horizontal gutter, min-height 0, overflow-y auto
-
-‎
-
-‎.panel desktop: width min(34vw, 620px), min-width 380px, column flex-start
-
-‎≤1100px: width min(70vw, 520px), min-width 0
-
-‎≤720px: width 100%, stretch; chip stays flex-start
-
-‎
-
-‎Elements in order:
-
-‎
-
-‎1) CHIP: “[ Voice entry ]” displayed as uppercase “[ VOICE ENTRY ]”
-
-‎   - JetBrains Mono 400
-
-‎   - font-size: clamp(11px, 0.72vw, 14px)
-
-‎   - letter-spacing: 0.2em
-
-‎   - background: rgba(255,255,255,0.09)
-
-‎   - padding: clamp(9px,0.8vw,14px) clamp(14px,1.1vw,20px)
-
-‎   - line-height 1
-
-‎   - NO rounded pill — sharp rectangle
-
-‎
-
-‎2) H1: “ECHOID”
-
-‎   - Sora 200
-
-‎   - font-size: clamp(54px, 6.2vw, 118px)  [≤380px: clamp(44px,15vw,64px)]
-
-‎   - letter-spacing: 0.03em
-
-‎   - line-height: 0.95
-
-‎   - margin-top: clamp(28px, 3vw, 52px)
-
-‎   - Brand-first: this is the dominant hero word; nothing larger
-
-‎
-
-‎3) TAGLINE: “Your voice ID to the E network.”
-
-‎   - JetBrains Mono 300, uppercase via CSS
-
-‎   - font-size: clamp(11px, 0.94vw, 17px)
-
-‎   - letter-spacing: 0.14em
-
-‎   - color: --text-dim
-
-‎   - margin-top: clamp(14px, 1.4vw, 24px)
-
-‎   - line-height 1.4
-
-‎
-
-‎4) FORM (noValidate, prevent default submit):
-
-‎   margin-top: clamp(38px, 4.6vw, 82px)
-
-‎   column gap: clamp(14px, 1.3vw, 22px)
-
-‎   width 100%
-
-‎
-
-‎   a) Email field
-
-‎      - Visually-hidden label “Email”
-
-‎      - Transparent input, no side borders, bottom border only 1px --line-strong
-
-‎      - border-radius 0
-
-‎      - padding: 0 2px clamp(12px,1.1vw,18px)
-
-‎      - Sora 300, clamp(16px,0.95vw,18px), white text
-
-‎      - placeholder “Email” color --text-dim
-
-‎      - focus: bottom border rgba(255,255,255,0.85); placeholder → --text-dimmer
-
-‎      - transition border-color 0.25s ease
-
-‎
-
-‎   b) Button “Proceed using email” (.btn--ghost)
-
-‎      - full width, border-radius 0, no border
-
-‎      - padding: clamp(17px,1.6vw,27px) 20px
-
-‎      - JetBrains Mono 400, uppercase, letter-spacing 0.22em
-
-‎      - font-size: clamp(11px,0.78vw,14px)
-
-‎      - background --fill-ghost, color --text-dimmer
-
-‎      - hover: bg rgba(255,255,255,0.09), color white
-
-‎
-
-‎   c) Button “Access” (.btn--solid)
-
-‎      - same type/padding as above
-
-‎      - background --fill-solid, color white
-
-‎      - hover: bg rgba(255,255,255,0.17)
-
-‎
-
-‎5) Referral link (centered under form): “I've got an invite key”
-
-‎   - JetBrains Mono 400, uppercase via CSS
-
-‎   - font-size: clamp(11px, 0.74vw, 14px)
-
-‎   - letter-spacing: 0.18em
-
-‎   - margin-top: clamp(26px, 2.6vw, 46px)
-
-‎   - align-self: center
-
-‎   - href #invite
-
-‎   - hover: --text-dim + underline, underline-offset 4px
-
-‎
-
-‎═══════════════════════════════════════
-
-‎LEGAL FOOTER
-
-‎═══════════════════════════════════════
-
-‎border-top: 1px solid --line
-
-‎padding: clamp(18px,1.7vw,30px) gutter; safe-area bottom
-
-‎text-align center
-
-‎Copy exact:
-
-‎“Opening an e.xyz account signals that you accept our Privacy Notice and Service Contract.”
-
-‎- Sora 300, clamp(12px,0.82vw,16px), color --text-dim, line-height 1.5
-
-‎- “Privacy Notice” and “Service Contract” are white underlined links (underline-offset 3px, thickness 1px), hrefs #privacy-notice and #service-contract
-
-‎- link hover → --text-dim
-
-‎
-
-‎═══════════════════════════════════════
-
-‎FOCUS / A11Y
-
-‎═══════════════════════════════════════
-
-‎Focus-visible outline: 1px solid rgba(255,255,255,0.7), offset 3px on buttons, CTA, toggle, referral, input, mobile links
-
-‎Mobile menu: role=dialog, aria-modal, aria-label="Site menu", aria-hidden when closed, inert when closed
-
-‎Toggle: aria-expanded, aria-controls="mobileMenu", aria-label Open/Close menu
-
-‎
-
-‎═══════════════════════════════════════
-
-‎REDUCED MOTION
-
-‎═══════════════════════════════════════
-
-‎prefers-reduced-motion: reduce → hide video; show poster as cover background-image on .hero__media; crush all animation/transition durations to 0.01ms
-
-‎
-
-‎═══════════════════════════════════════
-
-‎SHORT-HEIGHT COMPRESS (max-height: 640px)
-
-‎═══════════════════════════════════════
-
-‎Tighter nav padding; smaller H1 (clamp(36px,7vw,64px)); smaller form margins/gaps; thinner buttons; smaller legal (11px); tighter mobile menu
-
-‎
-
-‎═══════════════════════════════════════
-
-‎MOTION SUMMARY (what animates)
-
-‎═══════════════════════════════════════
-
-‎1. Background video continuous loop (primary presence)
-
-‎2. Hover color/background transitions at 0.25s ease on links, CTAs, buttons, input border
-
-‎3. Hamburger ↔ X morph 0.45s premium ease
-
-‎4. Mobile menu circular clip-path expand 0.7s premium ease + opacity 0.45s
-
-‎5. Mobile menu items staggered fade/slide-up with 70ms index delay
-
-‎NO entrance animation on desktop panel. NO floating badges over video. NO cards, pills, glow, purple, or multi-shadow chrome. Sharp rects only. Aesthetic: black / white / translucent white glass, terminal-mono UI over cinematic face video.
-
-‎
-
-‎═══════════════════════════════════════
-
-‎STACK / IMPLEMENTATION NOTES
-
-‎═══════════════════════════════════════
-
-‎React + plain CSS (or equivalent). No Tailwind utility look required — custom properties as above. Form action="#" method="post" but preventDefault. Page is the hero only.
-
-‎```
-
-‎
-
-‎---
-
-‎
-
-‎**Media URLs to keep verbatim:**
-
-‎
-
-‎- Video: `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_133255_956f653f-5d80-4b06-abd5-0f46c98b60fa.mp4`
-
-‎- Poster: `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_132328_5f9029c8-218f-4489-82b6-29ff2849920e.png`
-
-‎- Fonts: **Sora** (200/300/400) + **JetBrains Mono** (300/400/500)
-
-‎
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/3fc49dd6-fc70-42e2-a418-671fa34bdabd).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+‎Built for the X Layer ecosystem.
