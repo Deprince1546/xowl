@@ -1,3 +1,4 @@
+import { dexScreenerSearch, dexScreenerToken, type DexPair } from "./dexscreener.server";
 import { isLikelyMemecoin } from "./memecoin-filter";
 import {
   okxCandles,
@@ -32,7 +33,7 @@ export type MarketToken = {
   url: string;
   holders?: number | null;
   txs24h?: number | null;
-  source?: "okx" | "gecko";
+  source?: "okx" | "gecko" | "dexscreener";
 };
 
 const num = (value: unknown) => {
@@ -94,7 +95,7 @@ async function discoverCandidates(majorAddresses: Set<string>): Promise<Candidat
   for (const candidate of found.values()) {
     symbolCache.set(candidate.address, { symbol: candidate.symbol, dexName: candidate.dexName });
   }
-  return [...found.values()].sort((a, b) => b.trades - a.trades).slice(0, 40);
+  return [...found.values()].sort((a, b) => b.trades - a.trades).slice(0, 120);
 }
 
 function fromPriceInfo(candidate: Candidate, info: OkxPriceInfo): MarketToken {
@@ -124,44 +125,129 @@ function fromPriceInfo(candidate: Candidate, info: OkxPriceInfo): MarketToken {
   };
 }
 
+function fromDexPair(pair: DexPair): MarketToken | null {
+  const address = (pair.baseToken?.address ?? "").toLowerCase();
+  if (!address) return null;
+  return {
+    address,
+    symbol: pair.baseToken?.symbol ?? "?",
+    name: pair.baseToken?.name ?? pair.baseToken?.symbol ?? "Unknown",
+    pairAddress: pair.pairAddress ?? "",
+    dexId: pair.dexId ?? "",
+    imageUrl: pair.info?.imageUrl ?? null,
+    priceUsd: num(pair.priceUsd),
+    marketCap: num(pair.marketCap ?? pair.fdv),
+    fdv: num(pair.fdv),
+    liquidityUsd: num(pair.liquidity?.usd),
+    volume24h: num(pair.volume?.["h24"]),
+    change5m: num(pair.priceChange?.["m5"]),
+    change1h: num(pair.priceChange?.["h1"]),
+    change6h: num(pair.priceChange?.["h6"]),
+    change24h: num(pair.priceChange?.["h24"]),
+    buys24h: pair.txns?.["h24"]?.buys ?? null,
+    sells24h: pair.txns?.["h24"]?.sells ?? null,
+    pairCreatedAt: pair.pairCreatedAt ?? null,
+    url: pair.url ?? `https://dexscreener.com/xlayer/${pair.pairAddress ?? ""}`,
+    txs24h: (pair.txns?.["h24"]?.buys ?? 0) + (pair.txns?.["h24"]?.sells ?? 0) || null,
+    source: "dexscreener",
+  };
+}
+
+/** DEX Screener sweep — widens the candidate universe beyond OKX swap flow. */
+async function dexScreenerCandidates(majors: Set<string>): Promise<MarketToken[]> {
+  const queries = ["xlayer", "okb", "wokb xlayer", "usdt xlayer"];
+  const results = await Promise.allSettled(queries.map((q) => dexScreenerSearch(q)));
+  const out = new Map<string, MarketToken>();
+  for (const result of results) {
+    if (result.status !== "fulfilled") continue;
+    for (const pair of result.value) {
+      const token = fromDexPair(pair);
+      if (!token) continue;
+      if (!isLikelyMemecoin(token.symbol, token.name, majors, token.address)) continue;
+      const existing = out.get(token.address);
+      if (!existing || (token.liquidityUsd ?? 0) > (existing.liquidityUsd ?? 0)) out.set(token.address, token);
+    }
+  }
+  return [...out.values()];
+}
+
+/** Radar priority: $20K–$1M cap, days-to-two-weeks age, real activity. */
+export function radarPriority(token: MarketToken): number {
+  const cap = token.marketCap ?? token.fdv ?? 0;
+  const capFit = cap >= 20_000 && cap <= 1_000_000 ? 35 : cap > 0 && cap <= 5_000_000 ? 18 : 5;
+  const ageHours = token.pairCreatedAt ? (Date.now() - token.pairCreatedAt) / 3_600_000 : 0;
+  const ageFit = ageHours === 0 ? 10 : ageHours >= 24 && ageHours <= 24 * 14 ? 20 : ageHours < 24 ? 12 : 6;
+  const activity = Math.min(25, Math.log10(Math.max(token.volume24h ?? 0, 1)) * 6);
+  const depth = Math.min(20, Math.log10(Math.max(token.liquidityUsd ?? 0, 1)) * 5);
+  return capFit + ageFit + activity + depth;
+}
+
 /**
  * Discovery pipeline:
- * OKX flow discovery → memecoin filter → liquidity/activity filter → ranked shortlist.
- * The objective is to filter the noise, not to list every X Layer token.
+ * OKX flow discovery + DEX Screener sweep → memecoin filter → liquidity/activity filter
+ * → radar priority ranking → ~50 candidate universe.
  */
 export async function discoverXLayerTokens(): Promise<MarketToken[]> {
+  const merged = new Map<string, MarketToken>();
+  let majors = new Set<string>();
+
   if (okxConfigured()) {
     try {
-      const majors = await okxMajorAddressSet();
+      majors = await okxMajorAddressSet();
       const candidates = await discoverCandidates(majors);
       if (candidates.length > 0) {
         const info = await okxPriceInfo(candidates.map((c) => c.address));
-        const tokens = candidates
-          .map((candidate) => {
-            const row = info.get(candidate.address);
-            return row ? fromPriceInfo(candidate, row) : null;
-          })
-          .filter((token): token is MarketToken => Boolean(token))
-          // Stage 3 — liquidity / activity filter
-          .filter(
-            (token) =>
-              (token.liquidityUsd ?? 0) >= 2_000 &&
-              (token.volume24h ?? 0) >= 1_000 &&
-              (token.txs24h ?? 0) >= 20 &&
-              (token.priceUsd ?? 0) > 0,
-          )
-          .sort((a, b) => (b.volume24h ?? 0) - (a.volume24h ?? 0));
-        if (tokens.length > 0) return tokens;
+        for (const candidate of candidates) {
+          const row = info.get(candidate.address);
+          if (!row) continue;
+          const token = fromPriceInfo(candidate, row);
+          if ((token.priceUsd ?? 0) > 0) merged.set(token.address, token);
+        }
       }
     } catch (error) {
-      console.error("OKX discovery failed, falling back", error);
+      console.error("OKX discovery failed", error);
     }
   }
+
+  const dexTokens = await dexScreenerCandidates(majors).catch(() => [] as MarketToken[]);
+  for (const token of dexTokens) {
+    const existing = merged.get(token.address);
+    if (!existing) {
+      merged.set(token.address, token);
+      continue;
+    }
+    // OKX stays primary; DEX Screener back-fills the gaps.
+    existing.marketCap ??= token.marketCap;
+    existing.fdv ??= token.fdv;
+    existing.liquidityUsd ??= token.liquidityUsd;
+    existing.volume24h ??= token.volume24h;
+    existing.buys24h ??= token.buys24h;
+    existing.sells24h ??= token.sells24h;
+    existing.pairCreatedAt ??= token.pairCreatedAt;
+    existing.imageUrl ??= token.imageUrl;
+    existing.pairAddress ||= token.pairAddress;
+    existing.dexId ||= token.dexId;
+  }
+
+  const universe = [...merged.values()]
+    .filter((token) => isLikelyMemecoin(token.symbol, token.name, majors, token.address))
+    .filter(
+      (token) =>
+        (token.priceUsd ?? 0) > 0 &&
+        (token.liquidityUsd ?? 0) >= 1_000 &&
+        ((token.volume24h ?? 0) >= 300 || (token.txs24h ?? 0) >= 10),
+    )
+    .sort((a, b) => radarPriority(b) - radarPriority(a))
+    .slice(0, 50);
+
+  if (universe.length > 0) return universe;
   return geckoDiscover();
 }
 
 export async function fetchTokenMarket(address: string): Promise<MarketToken | null> {
   const target = address.toLowerCase();
+  let token: MarketToken | null = null;
+
   if (okxConfigured()) {
     const info = (await okxPriceInfo([target])).get(target);
     if (info && num(info.price) != null) {
@@ -174,16 +260,35 @@ export async function fetchTokenMarket(address: string): Promise<MarketToken | n
         cached?.symbol ??
         "?";
       const dexName = trades[0]?.dexName ?? cached?.dexName ?? "";
-      const token = fromPriceInfo({ address: target, symbol, name: symbol, trades: trades.length, dexName }, info);
+      token = fromPriceInfo({ address: target, symbol, name: symbol, trades: trades.length, dexName }, info);
       const flow = tradeFlow(trades, target);
       token.buys24h = flow.buys;
       token.sells24h = flow.sells;
-      return token;
     }
   }
+
+  const pair = await dexScreenerToken(target).catch(() => null);
+  const dexToken = pair ? fromDexPair(pair) : null;
+  if (token && dexToken) {
+    if (token.symbol === "?") token.symbol = dexToken.symbol;
+    if (token.name === "Unknown" || token.name === "?") token.name = dexToken.name;
+    token.marketCap ??= dexToken.marketCap;
+    token.fdv ??= dexToken.fdv;
+    token.liquidityUsd ??= dexToken.liquidityUsd;
+    token.volume24h ??= dexToken.volume24h;
+    token.pairCreatedAt ??= dexToken.pairCreatedAt;
+    token.pairAddress ||= dexToken.pairAddress;
+    token.dexId ||= dexToken.dexId;
+    token.imageUrl ??= dexToken.imageUrl;
+    return token;
+  }
+  if (token) return token;
+  if (dexToken) return dexToken;
+
   const discovered = await geckoDiscover().catch(() => []);
-  return discovered.find((token) => token.address.toLowerCase() === target) ?? null;
+  return discovered.find((t) => t.address.toLowerCase() === target) ?? null;
 }
+
 
 /** Recent-flow analytics from real OKX swaps: buy/sell split and unique traders. */
 export function tradeFlow(trades: OkxTrade[], address: string) {
@@ -416,7 +521,19 @@ export function scoreToken(market: MarketToken, onchain: OnchainSnapshot): Score
   const whaleScore = clamp(onchain.whaleWallets ? 45 + onchain.whaleWallets * 12 : 35);
   const ageScore = clamp(ageHours < 2 ? 25 : ageHours > 0 ? Math.min(85, 35 + Math.log10(ageHours) * 22) : 50);
   // Low/medium cap upside preference
-  const capScore = clamp(marketCap === 0 ? 40 : marketCap < 2_000_000 ? 85 : marketCap < 20_000_000 ? 60 : 30);
+  const capScore = clamp(
+    marketCap === 0
+      ? 40
+      : marketCap >= 20_000 && marketCap <= 1_000_000
+        ? 90
+        : marketCap < 20_000
+          ? 55
+          : marketCap < 5_000_000
+            ? 65
+            : marketCap < 20_000_000
+              ? 45
+              : 25,
+  );
 
   const onchainPart = holderScore * 0.3 + transferScore * 0.25 + whaleScore * 0.2 + ageScore * 0.15 + flowScore * 0.1;
   const marketPart = liquidityScore * 0.3 + volumeScore * 0.3 + momentumScore * 0.2 + capScore * 0.2;
