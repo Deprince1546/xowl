@@ -89,13 +89,19 @@ export type Database = {
         Row: {
           ath_market_cap: number | null
           ath_multiplier: number | null
+          ath_price: number | null
+          call_liquidity: number | null
           call_market_cap: number | null
           call_price: number | null
           called_at: string
           confidence: number
+          current_market_cap: number | null
           current_multiplier: number | null
+          current_price: number | null
           decision: string
           id: string
+          last_checked_at: string | null
+          milestones_hit: number[]
           reasoning: string | null
           risk_score: number
           smart_money_score: number
@@ -108,13 +114,19 @@ export type Database = {
         Insert: {
           ath_market_cap?: number | null
           ath_multiplier?: number | null
+          ath_price?: number | null
+          call_liquidity?: number | null
           call_market_cap?: number | null
           call_price?: number | null
           called_at?: string
           confidence?: number
+          current_market_cap?: number | null
           current_multiplier?: number | null
+          current_price?: number | null
           decision?: string
           id?: string
+          last_checked_at?: string | null
+          milestones_hit?: number[]
           reasoning?: string | null
           risk_score?: number
           smart_money_score?: number
@@ -127,13 +139,19 @@ export type Database = {
         Update: {
           ath_market_cap?: number | null
           ath_multiplier?: number | null
+          ath_price?: number | null
+          call_liquidity?: number | null
           call_market_cap?: number | null
           call_price?: number | null
           called_at?: string
           confidence?: number
+          current_market_cap?: number | null
           current_multiplier?: number | null
+          current_price?: number | null
           decision?: string
           id?: string
+          last_checked_at?: string | null
+          milestones_hit?: number[]
           reasoning?: string | null
           risk_score?: number
           smart_money_score?: number
