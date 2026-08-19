@@ -95,7 +95,7 @@ async function discoverCandidates(majorAddresses: Set<string>): Promise<Candidat
   for (const candidate of found.values()) {
     symbolCache.set(candidate.address, { symbol: candidate.symbol, dexName: candidate.dexName });
   }
-  return [...found.values()].sort((a, b) => b.trades - a.trades).slice(0, 40);
+  return [...found.values()].sort((a, b) => b.trades - a.trades).slice(0, 120);
 }
 
 function fromPriceInfo(candidate: Candidate, info: OkxPriceInfo): MarketToken {
@@ -521,7 +521,19 @@ export function scoreToken(market: MarketToken, onchain: OnchainSnapshot): Score
   const whaleScore = clamp(onchain.whaleWallets ? 45 + onchain.whaleWallets * 12 : 35);
   const ageScore = clamp(ageHours < 2 ? 25 : ageHours > 0 ? Math.min(85, 35 + Math.log10(ageHours) * 22) : 50);
   // Low/medium cap upside preference
-  const capScore = clamp(marketCap === 0 ? 40 : marketCap < 2_000_000 ? 85 : marketCap < 20_000_000 ? 60 : 30);
+  const capScore = clamp(
+    marketCap === 0
+      ? 40
+      : marketCap >= 20_000 && marketCap <= 1_000_000
+        ? 90
+        : marketCap < 20_000
+          ? 55
+          : marketCap < 5_000_000
+            ? 65
+            : marketCap < 20_000_000
+              ? 45
+              : 25,
+  );
 
   const onchainPart = holderScore * 0.3 + transferScore * 0.25 + whaleScore * 0.2 + ageScore * 0.15 + flowScore * 0.1;
   const marketPart = liquidityScore * 0.3 + volumeScore * 0.3 + momentumScore * 0.2 + capScore * 0.2;
