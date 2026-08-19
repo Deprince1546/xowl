@@ -1,3 +1,4 @@
+import { dexScreenerSearch, dexScreenerToken, type DexPair } from "./dexscreener.server";
 import { isLikelyMemecoin } from "./memecoin-filter";
 import {
   okxCandles,
@@ -32,7 +33,7 @@ export type MarketToken = {
   url: string;
   holders?: number | null;
   txs24h?: number | null;
-  source?: "okx" | "gecko";
+  source?: "okx" | "gecko" | "dexscreener";
 };
 
 const num = (value: unknown) => {
