@@ -29,9 +29,10 @@ export const Route = createFileRoute("/ai")({
 type Turn = { role: "you" | "xowl"; text: string };
 
 const SUGGESTIONS = [
-  "What makes an X Layer memecoin high risk in its first 6 hours?",
-  "How should I read buy/sell ratio versus liquidity depth?",
-  "Explain a healthy holder distribution for a new token.",
+  "Analyze 0x23f35a81da1e11fe55f62cdf0ae68ca02ea47777",
+  "Show me the strongest new X Layer memecoins right now",
+  "Find tokens between $20K and $100K market cap with strong buy pressure",
+  "Which XOwl Calls are currently above 2X?",
 ];
 
 function AiPage() {
@@ -57,7 +58,8 @@ function AiPage() {
       <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
         <h1 className="font-display text-3xl font-semibold">AI terminal</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          XOwl AI answers on X Layer market structure and onchain behaviour. It will say when it lacks data.
+          Connected live to XOwl's data layer — OKX Onchain OS, DEX Screener and the XOwl calls database. Paste a
+          contract address for a full intelligence pass, or ask about the radar, calls and performance.
         </p>
 
         <div className="mt-8 min-h-64 rounded-lg border border-border bg-card p-4">
