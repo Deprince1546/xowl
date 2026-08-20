@@ -14,7 +14,7 @@ import {
 
 export const getDiscoveryFeed = createServerFn({ method: "GET" }).handler(async () => {
   const tokens = await discoverXLayerTokens();
-  return { tokens: tokens.slice(0, 24), fetchedAt: new Date().toISOString() };
+  return { tokens: tokens.slice(0, 50), fetchedAt: new Date().toISOString() };
 });
 
 export const getTokenChart = createServerFn({ method: "GET" })
