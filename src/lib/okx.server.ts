@@ -129,11 +129,28 @@ export async function okxPriceInfo(addresses: string[]): Promise<Map<string, Okx
 }
 
 /** Recent onchain swaps for a token (used for flow, smart-money and discovery). */
-export async function okxTrades(address: string, limit = 100): Promise<OkxTrade[]> {
+export async function okxTrades(address: string, limit = 100, after?: string): Promise<OkxTrade[]> {
   const rows = await okxRequest<OkxTrade[]>(
-    `/api/v5/dex/market/trades?chainIndex=${X_LAYER_CHAIN_INDEX}&tokenContractAddress=${address}&limit=${limit}`,
+    `/api/v5/dex/market/trades?chainIndex=${X_LAYER_CHAIN_INDEX}&tokenContractAddress=${address}&limit=${limit}${
+      after ? `&after=${encodeURIComponent(after)}` : ""
+    }`,
   );
   return rows ?? [];
+}
+
+/** Paged swap history — walks back through the trade feed to widen discovery. */
+export async function okxTradeHistory(address: string, pages = 5): Promise<OkxTrade[]> {
+  const all: OkxTrade[] = [];
+  let cursor: string | undefined;
+  for (let i = 0; i < pages; i += 1) {
+    const rows = await okxTrades(address, 100, cursor);
+    if (rows.length === 0) break;
+    all.push(...rows);
+    const next = rows[rows.length - 1]?.id;
+    if (!next || next === cursor) break;
+    cursor = next;
+  }
+  return all;
 }
 
 /** OHLCV candles for live charting. */

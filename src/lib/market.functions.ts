@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+import { runXowlAgent } from "./ai-agent.server";
 import {
   askCoasty,
   discoverXLayerTokens,
@@ -13,7 +14,7 @@ import {
 
 export const getDiscoveryFeed = createServerFn({ method: "GET" }).handler(async () => {
   const tokens = await discoverXLayerTokens();
-  return { tokens: tokens.slice(0, 24), fetchedAt: new Date().toISOString() };
+  return { tokens: tokens.slice(0, 50), fetchedAt: new Date().toISOString() };
 });
 
 export const getTokenChart = createServerFn({ method: "GET" })
@@ -38,15 +39,4 @@ export const getTokenIntel = createServerFn({ method: "GET" })
 
 export const askXowlAi = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ question: z.string().min(2).max(2000) }).parse(input))
-  .handler(async ({ data }) => {
-    const answer = await askCoasty(
-      data.question,
-      "You are XOwl AI, an X Layer memecoin intelligence terminal. Only discuss X Layer (chain 196) tokens, onchain behaviour, risk and market structure. If you lack data, say so.",
-    );
-    return {
-      answer:
-        answer ||
-        "XOwl AI is not reachable right now, so no analysis was generated. Verify the Coasty API key and try again.",
-      live: Boolean(answer),
-    };
-  });
+  .handler(async ({ data }) => runXowlAgent(data.question));

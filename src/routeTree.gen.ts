@@ -16,6 +16,7 @@ import { Route as CallsRouteImport } from './routes/calls'
 import { Route as EchoidRouteImport } from './routes/echoid'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as TokensAddressRouteImport } from './routes/tokens.$address'
+import { Route as ApiPublicScanRouteImport } from './routes/api/public/scan'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +53,11 @@ const TokensAddressRoute = TokensAddressRouteImport.update({
   path: '/tokens/$address',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicScanRoute = ApiPublicScanRouteImport.update({
+  id: '/api/public/scan',
+  path: '/api/public/scan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/echoid': typeof EchoidRoute
   '/portfolio': typeof PortfolioRoute
   '/tokens/$address': typeof TokensAddressRoute
+  '/api/public/scan': typeof ApiPublicScanRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/echoid': typeof EchoidRoute
   '/portfolio': typeof PortfolioRoute
   '/tokens/$address': typeof TokensAddressRoute
+  '/api/public/scan': typeof ApiPublicScanRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/echoid': typeof EchoidRoute
   '/portfolio': typeof PortfolioRoute
   '/tokens/$address': typeof TokensAddressRoute
+  '/api/public/scan': typeof ApiPublicScanRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/echoid'
     | '/portfolio'
     | '/tokens/$address'
+    | '/api/public/scan'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/echoid'
     | '/portfolio'
     | '/tokens/$address'
+    | '/api/public/scan'
   id:
     | '__root__'
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/echoid'
     | '/portfolio'
     | '/tokens/$address'
+    | '/api/public/scan'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +131,7 @@ export interface RootRouteChildren {
   EchoidRoute: typeof EchoidRoute
   PortfolioRoute: typeof PortfolioRoute
   TokensAddressRoute: typeof TokensAddressRoute
+  ApiPublicScanRoute: typeof ApiPublicScanRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TokensAddressRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/scan': {
+      id: '/api/public/scan'
+      path: '/api/public/scan'
+      fullPath: '/api/public/scan'
+      preLoaderRoute: typeof ApiPublicScanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -183,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   EchoidRoute: EchoidRoute,
   PortfolioRoute: PortfolioRoute,
   TokensAddressRoute: TokensAddressRoute,
+  ApiPublicScanRoute: ApiPublicScanRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

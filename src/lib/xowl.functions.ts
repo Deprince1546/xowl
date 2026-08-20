@@ -2,13 +2,16 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
+import { computeCallStats } from "./calls.server";
 import { createPublicClient } from "./supabase-public.server";
+
+export const getCallStats = createServerFn({ method: "GET" }).handler(async () => computeCallStats());
 
 export const listCalls = createServerFn({ method: "GET" }).handler(async () => {
   const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("calls")
-    .select("id, token_address, symbol, decision, xowl_score, risk_score, smart_money_score, confidence, call_price, call_market_cap, ath_multiplier, current_multiplier, status, reasoning, called_at")
+    .select("id, token_address, symbol, decision, xowl_score, risk_score, smart_money_score, confidence, call_price, call_market_cap, call_liquidity, current_price, current_market_cap, ath_multiplier, current_multiplier, status, reasoning, called_at")
     .order("called_at", { ascending: false })
     .limit(60);
   if (error) throw new Error(error.message);

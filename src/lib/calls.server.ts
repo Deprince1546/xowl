@@ -58,6 +58,17 @@ export async function runScanCycle(limit = 10) {
       .maybeSingle();
     if (existing) continue;
 
+    await supabaseAdmin.from("tokens").upsert(
+      {
+        address: row.market.address,
+        symbol: row.market.symbol,
+        name: row.market.name,
+        dex_id: row.market.dexId || null,
+        pair_address: row.market.pairAddress || null,
+      },
+      { onConflict: "address" },
+    );
+
     const { error } = await supabaseAdmin.from("calls").insert({
       token_address: row.market.address,
       symbol: row.market.symbol,
@@ -180,7 +191,7 @@ export type CallStats = {
   sufficientData: boolean;
 };
 
-const MIN_SAMPLE = 10;
+const MIN_SAMPLE = 20;
 
 /** Real historical performance only — nothing is displayed until the sample is big enough. */
 export async function computeCallStats(): Promise<CallStats> {
