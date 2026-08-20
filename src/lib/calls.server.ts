@@ -191,7 +191,7 @@ export type CallStats = {
   sufficientData: boolean;
 };
 
-const MIN_SAMPLE = 10;
+const MIN_SAMPLE = 20;
 
 /** Real historical performance only — nothing is displayed until the sample is big enough. */
 export async function computeCallStats(): Promise<CallStats> {

@@ -14,12 +14,15 @@ export const Route = createFileRoute("/api/public/scan")({
 });
 
 async function run(request: Request) {
-  const secret = (process.env["XOWL_SCAN_SECRET"] ?? "").trim();
-  if (!secret) return Response.json({ error: "Scanner not configured" }, { status: 503 });
+  // Accept the XOwl scan secret or, on Vercel Cron, the platform CRON_SECRET.
+  const accepted = [process.env["XOWL_SCAN_SECRET"], process.env["CRON_SECRET"]]
+    .map((v) => (v ?? "").trim())
+    .filter(Boolean);
+  if (accepted.length === 0) return Response.json({ error: "Scanner not configured" }, { status: 503 });
 
   const url = new URL(request.url);
   const provided = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "") || (url.searchParams.get("key") ?? "");
-  if (provided !== secret) return new Response("Unauthorized", { status: 401 });
+  if (!accepted.includes(provided)) return new Response("Unauthorized", { status: 401 });
 
   const { runScanCycle } = await import("@/lib/calls.server");
   try {
