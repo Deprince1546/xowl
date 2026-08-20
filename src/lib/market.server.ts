@@ -65,38 +65,61 @@ async function okxMajorAddressSet() {
   return new Set(majors.map((t) => (t.tokenContractAddress ?? "").toLowerCase()).filter(Boolean));
 }
 
-/** Stage 1 — OKX X Layer discovery: harvest tokens from live swap flow. */
-async function discoverCandidates(majorAddresses: Set<string>): Promise<Candidate[]> {
-  const results = await Promise.allSettled(QUOTE_TOKENS.map((address) => okxTrades(address, 100)));
-  const found = new Map<string, Candidate>();
+/**
+ * Rolling candidate pool. X Layer's trade feed is thin per request, so each scan
+ * walks deep pages of swap flow and merges into a 24h pool to build the ~50 universe.
+ */
+const candidatePool = new Map<string, Candidate & { seenAt: number }>();
+const POOL_TTL = 24 * 3_600_000;
 
-  for (const result of results) {
-    if (result.status !== "fulfilled") continue;
-    for (const trade of result.value) {
-      for (const leg of trade.changedTokenInfo ?? []) {
-        const address = (leg.tokenAddress ?? "").toLowerCase();
-        const symbol = leg.tokenSymbol ?? "";
-        if (!address) continue;
-        // Stage 2 — remove non-memecoins (stables, wrapped/bridged majors, LP + infra tokens)
-        if (!isLikelyMemecoin(symbol, symbol, majorAddresses, address)) continue;
-        const existing = found.get(address);
-        if (existing) existing.trades += 1;
-        else
-          found.set(address, {
-            address,
-            symbol,
-            name: symbol,
-            trades: 1,
-            dexName: trade.dexName ?? "",
-          });
-      }
+function harvest(trades: OkxTrade[], majorAddresses: Set<string>, found: Map<string, Candidate>) {
+  for (const trade of trades) {
+    for (const leg of trade.changedTokenInfo ?? []) {
+      const address = (leg.tokenAddress ?? "").toLowerCase();
+      const symbol = leg.tokenSymbol ?? "";
+      if (!address) continue;
+      // Stage 2 — remove non-memecoins (stables, wrapped/bridged majors, LP + infra tokens)
+      if (!isLikelyMemecoin(symbol, symbol, majorAddresses, address)) continue;
+      const existing = found.get(address);
+      if (existing) existing.trades += 1;
+      else found.set(address, { address, symbol, name: symbol, trades: 1, dexName: trade.dexName ?? "" });
     }
   }
+}
+
+/** Stage 1 — OKX X Layer discovery: deep swap-flow harvest plus a co-trade second hop. */
+async function discoverCandidates(majorAddresses: Set<string>): Promise<Candidate[]> {
+  const found = new Map<string, Candidate>();
+
+  const quoteFlow = await Promise.allSettled(QUOTE_TOKENS.map((address) => okxTradeHistory(address, 12)));
+  for (const result of quoteFlow) {
+    if (result.status === "fulfilled") harvest(result.value, majorAddresses, found);
+  }
+
+  // Second hop: the swap history of each discovered memecoin surfaces its co-traded peers.
+  const seeds = [...found.values()].sort((a, b) => b.trades - a.trades).slice(0, 12);
+  const hop = await Promise.allSettled(seeds.map((seed) => okxTradeHistory(seed.address, 3)));
+  for (const result of hop) {
+    if (result.status === "fulfilled") harvest(result.value, majorAddresses, found);
+  }
+
+  const now = Date.now();
   for (const candidate of found.values()) {
     symbolCache.set(candidate.address, { symbol: candidate.symbol, dexName: candidate.dexName });
+    const pooled = candidatePool.get(candidate.address);
+    candidatePool.set(candidate.address, {
+      ...candidate,
+      trades: candidate.trades + (pooled ? pooled.trades : 0),
+      seenAt: now,
+    });
   }
-  return [...found.values()].sort((a, b) => b.trades - a.trades).slice(0, 120);
+  for (const [address, entry] of candidatePool) {
+    if (now - entry.seenAt > POOL_TTL) candidatePool.delete(address);
+  }
+
+  return [...candidatePool.values()].sort((a, b) => b.trades - a.trades).slice(0, 120);
 }
+
 
 function fromPriceInfo(candidate: Candidate, info: OkxPriceInfo): MarketToken {
   return {
