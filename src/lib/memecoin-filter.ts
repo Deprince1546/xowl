@@ -45,6 +45,9 @@ export const EXCLUDED_SYMBOLS = new Set(
 const EXCLUDED_PATTERNS = [
   // Tokenized equities / xStocks on X Layer (wTSLAx, SNDKx, wSPCXx…) are not memecoins
   /^w?[A-Za-z]{2,6}x$/,
+  // OKX Onchain OS liquid-restaking / receipt wrappers (aXlrWOKB, aXlrUSDT0…)
+  /^axlr/i,
+  /^a[A-Z][a-z]*r?(WOKB|USDT|USDC|ETH|BTC)/,
   /bridged/i,
   /\bLP\b/i,
   /^slp$/i,
