@@ -5,6 +5,7 @@ import {
   okxMajorTokens,
   okxPriceInfo,
   okxTrades,
+  okxTradeHistory,
   okxConfigured,
   type OkxPriceInfo,
   type OkxTrade,
