@@ -233,8 +233,14 @@ export async function discoverXLayerTokens(): Promise<MarketToken[]> {
     }
   }
 
-  const dexTokens = await dexScreenerCandidates(majors).catch(() => [] as MarketToken[]);
-  for (const token of dexTokens) {
+  // Full-chain sweep + DEX Screener fallback: OKX stays primary, these back-fill coverage
+  // so every actively traded X Layer token reaches the filter stage.
+  const [sweepTokens, dexTokens] = await Promise.all([
+    geckoSweep().catch(() => [] as MarketToken[]),
+    dexScreenerCandidates(majors).catch(() => [] as MarketToken[]),
+  ]);
+
+  for (const token of [...sweepTokens, ...dexTokens]) {
     const existing = merged.get(token.address);
     if (!existing) {
       merged.set(token.address, token);
@@ -251,6 +257,28 @@ export async function discoverXLayerTokens(): Promise<MarketToken[]> {
     existing.imageUrl ??= token.imageUrl;
     existing.pairAddress ||= token.pairAddress;
     existing.dexId ||= token.dexId;
+  }
+
+  // Enrich sweep-sourced tokens with OKX market cap / holders so ranking and scoring are complete.
+  if (okxConfigured()) {
+    const missing = [...merged.values()]
+      .filter((token) => !(token.marketCap ?? 0) || token.holders == null)
+      .map((token) => token.address)
+      .slice(0, 100);
+    if (missing.length > 0) {
+      const info = await okxPriceInfo(missing).catch(() => new Map<string, OkxPriceInfo>());
+      for (const [address, row] of info) {
+        const token = merged.get(address);
+        if (!token) continue;
+        token.marketCap ||= num(row.marketCap);
+        token.fdv ||= num(row.marketCap);
+        token.priceUsd ||= num(row.price);
+        token.liquidityUsd ||= num(row.liquidity);
+        token.volume24h ||= num((row as Record<string, unknown>)["volume24H"]);
+        token.holders ??= num(row.holders);
+        token.txs24h ??= num((row as Record<string, unknown>)["txs24H"]);
+      }
+    }
   }
 
   const universe = [...merged.values()]
@@ -425,6 +453,27 @@ async function geckoFetch(path: string): Promise<MarketToken[]> {
   const value = [...best.values()];
   cache.set(path, { at: Date.now(), value });
   return value;
+}
+
+/** Full X Layer sweep: every indexed pool page, so no live token is invisible to the radar. */
+export async function geckoSweep(): Promise<MarketToken[]> {
+  const paths: string[] = [];
+  for (let page = 1; page <= 5; page += 1) {
+    paths.push(`/pools?sort=h24_volume_usd_desc&include=base_token&page=${page}`);
+    paths.push(`/new_pools?include=base_token&page=${page}`);
+  }
+  paths.push("/trending_pools?include=base_token&page=1");
+  const results = await Promise.allSettled(paths.map((path) => geckoFetch(path)));
+  const merged = new Map<string, MarketToken>();
+  for (const result of results) {
+    if (result.status !== "fulfilled") continue;
+    for (const token of result.value) {
+      const key = token.address.toLowerCase();
+      const existing = merged.get(key);
+      if (!existing || (token.liquidityUsd ?? 0) > (existing.liquidityUsd ?? 0)) merged.set(key, token);
+    }
+  }
+  return [...merged.values()];
 }
 
 async function geckoDiscover(): Promise<MarketToken[]> {
