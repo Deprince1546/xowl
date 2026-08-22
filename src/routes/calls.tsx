@@ -110,7 +110,8 @@ function CallsPage() {
                   <th className="px-4 py-3 text-right">Score</th>
                   <th className="px-4 py-3 text-right">Risk</th>
                   <th className="px-4 py-3 text-right">Entry</th>
-                  <th className="px-4 py-3 text-right">Peak</th>
+                  <th className="px-4 py-3 text-right">Peak MC</th>
+                  <th className="px-4 py-3 text-right">ATH</th>
                   <th className="px-4 py-3 text-right">Now</th>
                 </tr>
               </thead>
