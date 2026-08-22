@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import { AppShell } from "@/components/AppShell";
-import { getCallStats, listCalls } from "@/lib/xowl.functions";
+import { computeStats, fetchCalls, fetchScanRuns, type ScanRun } from "@/lib/xowl-public";
 import { formatMultiplier, formatUsd } from "@/lib/xlayer";
 
 export const Route = createFileRoute("/calls")({
@@ -35,13 +35,18 @@ const decisionStyle: Record<string, string> = {
 };
 
 function CallsPage() {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["calls"],
-    queryFn: () => listCalls(),
+    queryFn: fetchCalls,
     refetchInterval: 60_000,
   });
-  const { data: stats } = useQuery({ queryKey: ["call-stats"], queryFn: () => getCallStats() });
+  const { data: runs } = useQuery({
+    queryKey: ["scan-runs"],
+    queryFn: fetchScanRuns,
+    refetchInterval: 60_000,
+  });
   const calls = data ?? [];
+  const stats = data ? computeStats(calls) : null;
   const pct = (value: number | null | undefined) => (value == null ? "—" : `${Math.round(value * 100)}%`);
   const mult = (value: number | null | undefined) => (value == null ? "—" : `${value.toFixed(2)}x`);
 
@@ -52,6 +57,8 @@ function CallsPage() {
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
           Immutable record of every XOwl signal. Nothing is deleted — losing calls stay published alongside the wins.
         </p>
+
+        <ScanStatus runs={runs ?? []} />
 
         {stats && (
           <div className="mt-8 rounded-lg border border-border bg-card p-4">
@@ -79,7 +86,11 @@ function CallsPage() {
         )}
 
         {isLoading && <p className="data mt-10 text-xs text-muted-foreground">Loading calls…</p>}
-        {isError && <p className="data mt-10 text-xs text-destructive">Could not load the call history.</p>}
+        {isError && (
+          <p className="data mt-10 text-xs text-destructive">
+            Could not load the call history: {(error as Error)?.message ?? "unknown error"}
+          </p>
+        )}
         {!isLoading && !isError && calls.length === 0 && (
           <div className="mt-10 rounded-lg border border-dashed border-border p-10 text-center">
             <p className="data text-xs uppercase tracking-widest text-muted-foreground">No calls published yet</p>
@@ -134,6 +145,56 @@ function CallsPage() {
         )}
       </section>
     </AppShell>
+  );
+}
+
+function ScanStatus({ runs }: { runs: ScanRun[] }) {
+  const last = runs[0];
+  const lastOk = runs.find((r) => r.status === "OK");
+  const ago = (iso: string) => {
+    const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+    if (mins < 1) return "just now";
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    return hrs < 24 ? `${hrs}h ${mins % 60}m ago` : `${Math.floor(hrs / 24)}d ago`;
+  };
+  const tone =
+    !last ? "bg-muted-foreground" : last.status === "OK" ? "bg-success" : last.status === "RUNNING" ? "bg-warning" : "bg-destructive";
+
+  return (
+    <div className="mt-8 rounded-lg border border-border bg-card p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="data text-[10px] uppercase tracking-widest text-muted-foreground">Calls ingestion status</p>
+        <span className="data flex items-center gap-2 text-[10px] uppercase tracking-widest">
+          <span className={`h-2 w-2 rounded-full ${tone}`} />
+          {last ? last.status : "NO SCAN YET"}
+        </span>
+      </div>
+
+      {!last ? (
+        <p className="mt-2 text-sm text-muted-foreground">
+          No scan has run yet on this deployment. The scanner endpoint must be triggered with its scan key before calls
+          appear here.
+        </p>
+      ) : (
+        <>
+          <div className="data mt-3 grid grid-cols-2 gap-4 text-xs sm:grid-cols-3 lg:grid-cols-6">
+            <Stat label="Last scan" value={ago(last.started_at)} />
+            <Stat label="Candidates" value={String(last.candidates)} />
+            <Stat label="Analysed" value={String(last.analysed)} />
+            <Stat label="Filtered out" value={String(last.filtered_out)} />
+            <Stat label="Calls published" value={String(last.published)} />
+            <Stat label="Calls refreshed" value={String(last.refreshed)} />
+          </div>
+          {last.error && <p className="data mt-3 text-xs text-destructive">Scan error: {last.error}</p>}
+          {last.status !== "OK" && lastOk && (
+            <p className="data mt-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+              Last successful scan {ago(lastOk.started_at)} · {lastOk.published} published
+            </p>
+          )}
+        </>
+      )}
+    </div>
   );
 }
 
