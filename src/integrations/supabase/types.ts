@@ -233,6 +233,48 @@ export type Database = {
         }
         Relationships: []
       }
+      scan_runs: {
+        Row: {
+          analysed: number
+          candidates: number
+          duration_ms: number | null
+          error: string | null
+          filtered_out: number
+          finished_at: string | null
+          id: string
+          published: number
+          refreshed: number
+          started_at: string
+          status: string
+        }
+        Insert: {
+          analysed?: number
+          candidates?: number
+          duration_ms?: number | null
+          error?: string | null
+          filtered_out?: number
+          finished_at?: string | null
+          id?: string
+          published?: number
+          refreshed?: number
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          analysed?: number
+          candidates?: number
+          duration_ms?: number | null
+          error?: string | null
+          filtered_out?: number
+          finished_at?: string | null
+          id?: string
+          published?: number
+          refreshed?: number
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       tokens: {
         Row: {
           address: string
