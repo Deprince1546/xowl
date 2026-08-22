@@ -29,6 +29,33 @@ type CallRow = {
  * shortlist, publish 5–10 real calls and refresh performance on every open call.
  */
 export async function runScanCycle(limit = 10) {
+  const startedAt = Date.now();
+  const { data: run } = await supabaseAdmin
+    .from("scan_runs")
+    .insert({ status: "RUNNING" })
+    .select("id")
+    .single();
+  const runId = run?.id ?? null;
+  const finish = async (fields: Record<string, unknown>) => {
+    if (!runId) return;
+    await supabaseAdmin
+      .from("scan_runs")
+      .update({ finished_at: new Date().toISOString(), duration_ms: Date.now() - startedAt, ...fields })
+      .eq("id", runId);
+  };
+
+  try {
+    return await scanCycleInner(limit, finish);
+  } catch (error) {
+    await finish({ status: "FAILED", error: (error as Error).message });
+    throw error;
+  }
+}
+
+async function scanCycleInner(
+  limit: number,
+  finish: (fields: Record<string, unknown>) => Promise<void>,
+) {
   const universe = await discoverXLayerTokens();
   // Shortlist: best radar candidates get the expensive onchain + AI pass.
   const shortlist = universe.slice(0, 18);
@@ -95,6 +122,14 @@ export async function runScanCycle(limit = 10) {
   }
 
   const refreshed = await refreshCallPerformance();
+  await finish({
+    status: "OK",
+    candidates: universe.length,
+    analysed: analysed.length,
+    filtered_out: Math.max(analysed.length - winners.length, 0),
+    published,
+    refreshed,
+  });
   return { universe: universe.length, analysed: analysed.length, published, refreshed };
 }
 
